@@ -1,6 +1,6 @@
 <template></template>
 
-<script setup>
+<script setup lang="ts">
 import {
   AxesHelper,
   BoxGeometry,
@@ -14,7 +14,6 @@ import {
   Mesh,
   MeshStandardMaterial,
   PlaneGeometry,
-  PointLight,
   Scene,
 } from "three";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
@@ -25,6 +24,7 @@ const maxX = 3000;
 const diagonal = maxX * Math.sqrt(2);
 
 const helpersEnabled = false;
+const groundColor = 0x9daf9d;
 
 let material, geometry;
 
@@ -84,7 +84,7 @@ helpers.add(helper);
 // --------------------------------
 
 geometry = new PlaneGeometry(maxX, maxX);
-material = new MeshStandardMaterial({ color: 0x8f816d, side: DoubleSide });
+material = new MeshStandardMaterial({ color: groundColor, side: DoubleSide });
 const ground = new Mesh(geometry, material);
 ground.position.set(0, -1, 0);
 ground.rotation.x = Math.PI / 2;
@@ -120,8 +120,15 @@ const gui = new GUI({
 });
 const setupGUI = () => {
   const params = {
+    groundColor,
     helpersEnabled,
   };
+  gui
+    .addColor(params, "groundColor")
+    .name("background color")
+    .onChange((value) => {
+      ground.material.setValues({ color: value });
+    });
   gui
     .add(params, "helpersEnabled")
     .name("enable helpers")

@@ -1,6 +1,6 @@
 <template></template>
 
-<script setup>
+<script setup lang="ts">
 import { CameraHelper, PerspectiveCamera } from "three";
 import { onMounted } from "vue";
 

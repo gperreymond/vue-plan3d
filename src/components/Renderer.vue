@@ -1,6 +1,6 @@
 <template></template>
 
-<script setup>
+<script setup lang="ts">
 import { PCFSoftShadowMap, WebGLRenderer } from "three";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { onMounted } from "vue";
