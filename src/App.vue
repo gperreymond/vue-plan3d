@@ -14,7 +14,7 @@ body {
 </style>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
 import Renderer from "./components/Renderer.vue";
 import Scene from "./components/Scene.vue";
@@ -70,6 +70,12 @@ onMounted(async () => {
   // Go pikachu!
   sceneContainer.value.appendChild(engine.renderer.domElement);
   animate();
+});
+onUnmounted(async () => {
+  console.log("App", "onUnmounted");
+  cancelAnimationFrame(animationFrameId);
+  engine.renderer.dispose();
+  controls.dispose();
 });
 </script>
 
