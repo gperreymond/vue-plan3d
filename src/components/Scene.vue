@@ -26,7 +26,7 @@ const diagonal = maxX * Math.sqrt(2);
 const helpersEnabled = false;
 const groundColor = 0x9daf9d;
 
-let material, geometry;
+let material, geometry, ground;
 
 const scene = new Scene();
 
@@ -49,8 +49,8 @@ shadowLight.shadow.mapSize.width = maxX;
 shadowLight.shadow.mapSize.height = maxX;
 shadowLight.shadow.camera.near = 0;
 shadowLight.shadow.camera.far = diagonal;
-shadowLight.shadow.camera.left = -maxX / 2;
-shadowLight.shadow.camera.right = maxX / 2;
+shadowLight.shadow.camera.left = -maxX;
+shadowLight.shadow.camera.right = maxX;
 shadowLight.shadow.camera.top = maxX / 2;
 shadowLight.shadow.camera.bottom = -maxX / 2;
 scene.add(shadowLight);
@@ -80,15 +80,28 @@ const helper = new CameraHelper(shadowLight.shadow.camera);
 helpers.add(helper);
 
 // --------------------------------
-// Ground
+// Grounds
 // --------------------------------
 
-geometry = new PlaneGeometry(maxX, maxX);
+geometry = new PlaneGeometry(maxX, maxX / 2);
 material = new MeshStandardMaterial({ color: groundColor, side: DoubleSide });
-const ground = new Mesh(geometry, material);
-ground.position.set(0, -1, 0);
+ground = new Mesh(geometry, material);
+ground.position.set(0, -1, maxX / 4);
 ground.rotation.x = Math.PI / 2;
 ground.receiveShadow = true;
+ground.castShadow = false;
+scene.add(ground);
+
+geometry = new PlaneGeometry(maxX, maxX / 4);
+material = new MeshStandardMaterial({ color: groundColor, side: DoubleSide });
+ground = new Mesh(geometry, material);
+ground.position.set(
+  0,
+  (-Math.cos(Math.PI / 4) * maxX) / 8,
+  (-Math.cos(Math.PI / 4) * maxX) / 8,
+);
+ground.rotation.x = Math.PI / 4;
+ground.receiveShadow = false;
 ground.castShadow = false;
 scene.add(ground);
 

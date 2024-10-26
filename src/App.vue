@@ -8,7 +8,9 @@
   <Renderer ref="rendererRef" />
   <!-- items -->
   <Wall
-    v-for="(data, index) in api.walls"
+    v-for="(data, index) in filter(api.items, function (o) {
+      return o.type === 'wall';
+    })"
     :key="index"
     :ref="setWallRef"
     :data="data"
@@ -25,6 +27,7 @@ body {
 <script setup lan="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { filter } from "lodash";
 
 import Renderer from "./components/Renderer.vue";
 import Scene from "./components/Scene.vue";
@@ -32,33 +35,37 @@ import Camera from "./components/Camera.vue";
 import Wall from "./components/items/Wall.vue";
 
 const api = {
-  walls: [
+  items: [
     {
-      name: "Mur du fond",
+      type: "wall",
+      title: "Mur du fond",
       width: 3000,
-      heigh: 30,
+      height: 30,
       thickness: 15,
       color: 0xedebe6,
+      posY: 15 / 2,
     },
     {
-      name: "Mur de droite",
-      width: 500,
-      heigh: 120,
+      type: "wall",
+      title: "Mur de droite",
+      width: 1500 - 15,
+      height: 120,
       thickness: 15,
       color: 0xedebe6,
       rotation: Math.PI / 2,
       posX: 3000 / 2 - 15 / 2,
-      posY: 500 / 2 - 15 / 2,
+      posY: 1500 / 2 + 15 / 2,
     },
     {
-      name: "Mur de gauche",
-      width: 500,
-      heigh: 120,
+      type: "wall",
+      title: "Mur de gauche",
+      width: 1500 - 15,
+      height: 120,
       thickness: 15,
       color: 0xedebe6,
       rotation: -Math.PI / 2,
       posX: -(3000 / 2 - 15 / 2),
-      posY: 500 / 2 - 15 / 2,
+      posY: 1500 / 2 + 15 / 2,
     },
   ],
 };
@@ -87,7 +94,6 @@ let renderer, scene, camera, controls;
 
 const animate = () => {
   animationFrameId = requestAnimationFrame(animate);
-  controls.update();
   engine.renderer.render(engine.scene, engine.camera);
 };
 
@@ -95,17 +101,16 @@ onMounted(async () => {
   console.log("App", "onMounted");
   console.log(wallRefs.value);
   // get all engine
-  engine.gui.renderer = rendererRef.value.gui;
-  engine.gui.scene = sceneRef.value.gui;
   engine.renderer = rendererRef.value.renderer;
   engine.scene = sceneRef.value.scene;
   engine.camera = cameraRef.value.camera;
   // plabe all gui
-  guiContainer.value.appendChild(engine.gui.renderer.domElement);
-  guiContainer.value.appendChild(engine.gui.scene.domElement);
+  guiContainer.value.appendChild(rendererRef.value.gui.domElement);
+  guiContainer.value.appendChild(sceneRef.value.gui.domElement);
   // add all items in the scene
   wallRefs.value.map((wall) => {
     engine.scene.add(wall.group);
+    guiContainer.value.appendChild(wall.gui.domElement);
   });
   // controls
   controls = new OrbitControls(engine.camera, engine.renderer.domElement);
