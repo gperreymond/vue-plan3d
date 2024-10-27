@@ -1,6 +1,7 @@
 {
   "name": "vue-plan3d",
   "version": "1.0.0",
+  "author": "Gilles Perreymond <gperreymond@gmail.com>",
   "type": "module",
   "scripts": {
     "dev": "vite",
