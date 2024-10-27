@@ -12,7 +12,15 @@
       return o.type === 'wall';
     })"
     :key="index"
-    :ref="setWallRef"
+    :ref="setItemsRef"
+    :data="data"
+  />
+  <HorizontalFence
+    v-for="(data, index) in filter(api.items, function (o) {
+      return o.type === 'hfence';
+    })"
+    :key="index"
+    :ref="setItemsRef"
     :data="data"
   />
 </template>
@@ -33,40 +41,51 @@ import Renderer from "./components/Renderer.vue";
 import Scene from "./components/Scene.vue";
 import Camera from "./components/Camera.vue";
 import Wall from "./components/items/Wall.vue";
+import HorizontalFence from "./components/items/HorizontalFence.vue";
 
 const api = {
   items: [
     {
+      id: "wall_01",
       type: "wall",
       title: "Mur du fond",
       width: 3000,
       height: 30,
       thickness: 15,
       color: 0xedebe6,
-      posY: 15 / 2,
     },
-    {
-      type: "wall",
-      title: "Mur de droite",
-      width: 1500 - 15,
-      height: 120,
-      thickness: 15,
-      color: 0xedebe6,
-      rotation: Math.PI / 2,
-      posX: 3000 / 2 - 15 / 2,
-      posY: 1500 / 2 + 15 / 2,
-    },
-    {
-      type: "wall",
-      title: "Mur de gauche",
-      width: 1500 - 15,
-      height: 120,
-      thickness: 15,
-      color: 0xedebe6,
-      rotation: -Math.PI / 2,
-      posX: -(3000 / 2 - 15 / 2),
-      posY: 1500 / 2 + 15 / 2,
-    },
+    // {
+    //   type: "wall",
+    //   title: "Mur de droite",
+    //   width: 1500 - 15,
+    //   height: 180,
+    //   thickness: 15,
+    //   color: 0xedebe6,
+    //   // rotation: Math.PI / 2,
+    //   // posX: 3000 / 2 - 15 / 2,
+    //   // posY: 1500 / 2 + 15 / 2,
+    // },
+    // {
+    //   type: "wall",
+    //   title: "Mur de gauche",
+    //   width: 1500 - 15,
+    //   height: 180,
+    //   thickness: 15,
+    //   color: 0xedebe6,
+    //   // rotation: -Math.PI / 2,
+    //   // posX: -(3000 / 2 - 15 / 2),
+    //   // posY: 1500 / 2 + 15 / 2,
+    // },
+    // {
+    //   type: 'hfence',
+    //   width: 3000 - 15 - 12*2,
+    //   numberOfPosts: 20,
+    //   postHeight: 100,
+    //   postThickness: 12,
+    //   railHeight: 7.2,
+    //   railThickness: 5,
+    //   numberOfRails: 5,
+    // }
   ],
 };
 
@@ -74,10 +93,10 @@ const sceneContainer = ref(null);
 const sceneRef = ref(null);
 const cameraRef = ref(null);
 const rendererRef = ref(null);
-const wallRefs = ref([]);
-const setWallRef = (el) => {
+const itemsRef = ref([]);
+const setItemsRef = (el) => {
   if (el) {
-    wallRefs.value.push(el);
+    itemsRef.value.push(el);
   }
 };
 const guiContainer = ref(null);
@@ -99,7 +118,7 @@ const animate = () => {
 
 onMounted(async () => {
   console.log("App", "onMounted");
-  console.log(wallRefs.value);
+  console.log(itemsRef.value);
   // get all engine
   engine.renderer = rendererRef.value.renderer;
   engine.scene = sceneRef.value.scene;
@@ -108,9 +127,10 @@ onMounted(async () => {
   guiContainer.value.appendChild(rendererRef.value.gui.domElement);
   guiContainer.value.appendChild(sceneRef.value.gui.domElement);
   // add all items in the scene
-  wallRefs.value.map((wall) => {
-    engine.scene.add(wall.group);
-    guiContainer.value.appendChild(wall.gui.domElement);
+  itemsRef.value.map((item) => {
+    console.log("add item in scene", item)
+    engine.scene.add(item.group);
+    guiContainer.value.appendChild(item.gui.domElement);
   });
   // controls
   controls = new OrbitControls(engine.camera, engine.renderer.domElement);

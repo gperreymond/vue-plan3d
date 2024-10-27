@@ -12,29 +12,28 @@ const props = defineProps({
   },
 });
 
+
+const totalWidth = props.data.width || 200;
+const totalHeight = props.data.height || 100;
+const thickness = props.data.thickness || 20;
+const color = props.data.color || 0xff0000
+
 let geometry, material, item;
 
 const group = new Group();
 
-geometry = new BoxGeometry(
-  props.data.width,
-  props.data.height,
-  props.data.thickness,
-);
-material = new MeshStandardMaterial({ color: props.data.color });
+geometry = new BoxGeometry(totalWidth, totalHeight, thickness);
+material = new MeshStandardMaterial({ color });
 item = new Mesh(geometry, material);
-item.position.set(
-  props.data.posX || 0,
-  props.data.height / 2,
-  props.data.posY || 0,
-);
 item.rotation.set(0, props.data.rotation || 0, 0);
 item.receiveShadow = true;
 item.castShadow = true;
 group.add(item);
 
+group.position.set(0, totalHeight / 2, thickness / 2);
+
 const calculateTotalSurface = () => {
-  return (props.data.width / 100) * (props.data.height / 100);
+  return (totalWidth / 100) * (totalHeight / 100);
 };
 
 const gui = new GUI({

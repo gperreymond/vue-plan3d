@@ -92,19 +92,6 @@ ground.receiveShadow = true;
 ground.castShadow = false;
 scene.add(ground);
 
-geometry = new PlaneGeometry(maxX, maxX / 4);
-material = new MeshStandardMaterial({ color: groundColor, side: DoubleSide });
-ground = new Mesh(geometry, material);
-ground.position.set(
-  0,
-  (-Math.cos(Math.PI / 4) * maxX) / 8,
-  (-Math.cos(Math.PI / 4) * maxX) / 8,
-);
-ground.rotation.x = Math.PI / 4;
-ground.receiveShadow = false;
-ground.castShadow = false;
-scene.add(ground);
-
 // --------------------------------
 // Cube for tests
 // --------------------------------
