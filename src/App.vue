@@ -128,7 +128,7 @@ onMounted(async () => {
   guiContainer.value.appendChild(sceneRef.value.gui.domElement);
   // add all items in the scene
   itemsRef.value.map((item) => {
-    console.log("add item in scene", item)
+    console.log("add item in scene", item);
     engine.scene.add(item.group);
     guiContainer.value.appendChild(item.gui.domElement);
   });

@@ -12,11 +12,10 @@ const props = defineProps({
   },
 });
 
-
 const totalWidth = props.data.width || 200;
 const totalHeight = props.data.height || 100;
 const thickness = props.data.thickness || 20;
-const color = props.data.color || 0xff0000
+const color = props.data.color || 0xff0000;
 
 let geometry, material, item;
 
