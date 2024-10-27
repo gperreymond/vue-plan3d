@@ -7,22 +7,7 @@
   <Camera ref="cameraRef" />
   <Renderer ref="rendererRef" />
   <!-- items -->
-  <Wall
-    v-for="(data, index) in filter(api.items, function (o) {
-      return o.type === 'wall';
-    })"
-    :key="index"
-    :ref="setItemsRef"
-    :data="data"
-  />
-  <HorizontalFence
-    v-for="(data, index) in filter(api.items, function (o) {
-      return o.type === 'hfence';
-    })"
-    :key="index"
-    :ref="setItemsRef"
-    :data="data"
-  />
+  <Wall v-for="data in walls" :key="data.id" :data="data" :ref="setItemsRef" />
 </template>
 
 <style>
@@ -42,51 +27,16 @@ import Scene from "./components/Scene.vue";
 import Camera from "./components/Camera.vue";
 import Wall from "./components/items/Wall.vue";
 import HorizontalFence from "./components/items/HorizontalFence.vue";
+import ProjectService from "./services/ProjectService";
 
-const api = {
-  items: [
-    {
-      id: "wall_01",
-      type: "wall",
-      title: "Mur du fond",
-      width: 3000,
-      height: 30,
-      thickness: 15,
-      color: 0xedebe6,
-    },
-    // {
-    //   type: "wall",
-    //   title: "Mur de droite",
-    //   width: 1500 - 15,
-    //   height: 180,
-    //   thickness: 15,
-    //   color: 0xedebe6,
-    //   // rotation: Math.PI / 2,
-    //   // posX: 3000 / 2 - 15 / 2,
-    //   // posY: 1500 / 2 + 15 / 2,
-    // },
-    // {
-    //   type: "wall",
-    //   title: "Mur de gauche",
-    //   width: 1500 - 15,
-    //   height: 180,
-    //   thickness: 15,
-    //   color: 0xedebe6,
-    //   // rotation: -Math.PI / 2,
-    //   // posX: -(3000 / 2 - 15 / 2),
-    //   // posY: 1500 / 2 + 15 / 2,
-    // },
-    // {
-    //   type: 'hfence',
-    //   width: 3000 - 15 - 12*2,
-    //   numberOfPosts: 20,
-    //   postHeight: 100,
-    //   postThickness: 12,
-    //   railHeight: 7.2,
-    //   railThickness: 5,
-    //   numberOfRails: 5,
-    // }
-  ],
+const walls = ref([]);
+const fetchProject = async (id) => {
+  try {
+    const response = await ProjectService.get(id);
+    walls.value = response.data.walls;
+  } catch (err) {
+    console.error("fetchProject", err.message);
+  }
 };
 
 const sceneContainer = ref(null);
@@ -118,7 +68,8 @@ const animate = () => {
 
 onMounted(async () => {
   console.log("App", "onMounted");
-  console.log(itemsRef.value);
+  await fetchProject(1);
+  console.log("App", "Walls", walls.value);
   // get all engine
   engine.renderer = rendererRef.value.renderer;
   engine.scene = sceneRef.value.scene;
@@ -141,6 +92,7 @@ onMounted(async () => {
   sceneContainer.value.appendChild(engine.renderer.domElement);
   animate();
 });
+
 onUnmounted(async () => {
   console.log("App", "onUnmounted");
   cancelAnimationFrame(animationFrameId);
