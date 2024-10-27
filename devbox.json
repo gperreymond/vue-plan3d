@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.4/.schema/devbox.schema.json",
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.5/.schema/devbox.schema.json",
   "packages": ["yarn@1.22.22", "nodejs@22.8.0"],
   "shell": {
     "init_hook": ["echo 'Welcome to devbox!' > /dev/null"],
