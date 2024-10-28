@@ -5,7 +5,6 @@ export default {
     return apiClient.get(`/walls/${id}`);
   },
   update(id, data) {
-    console.log(data);
     return apiClient.put(`/walls/${id}`, data);
   },
   delete(id) {

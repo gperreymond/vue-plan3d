@@ -8,7 +8,6 @@ import {
   DirectionalLight,
   DoubleSide,
   GridHelper,
-  Group,
   HemisphereLight,
   HemisphereLightHelper,
   Mesh,
@@ -22,13 +21,11 @@ import { onMounted } from "vue";
 const maxZ = 1000;
 const maxX = 3000;
 const diagonal = maxX * Math.sqrt(2);
-
-const helpersEnabled = false;
-const groundColor = 0x9daf9d;
-
-let material, geometry, ground;
+const groundColor = 0xbfeebf;
 
 const scene = new Scene();
+
+let material, geometry;
 
 // --------------------------------
 // Lights
@@ -59,25 +56,20 @@ scene.add(shadowLight);
 // Helpers
 // --------------------------------
 
-const helpers = new Group();
-
 const axesHelper = new AxesHelper(maxZ);
 axesHelper.setColors(0x0000ff, 0x0000ff, 0x0000ff);
-helpers.add(axesHelper);
 
+const gridHelperEnabled = true;
 const gridHelper = new GridHelper(maxX, maxX / 100, 0x0000ff, 0xe8e5e1);
 gridHelper.position.y = 0;
 gridHelper.position.x = 0;
-helpers.add(gridHelper);
+scene.add(gridHelper);
 
 const lightHelper = new HemisphereLightHelper(light, 100);
-helpers.add(lightHelper);
 
 const lightSecondHelper = new HemisphereLightHelper(lightSecond, 50);
-helpers.add(lightSecondHelper);
 
-const helper = new CameraHelper(shadowLight.shadow.camera);
-helpers.add(helper);
+const cameraHelper = new CameraHelper(shadowLight.shadow.camera);
 
 // --------------------------------
 // Grounds
@@ -85,7 +77,7 @@ helpers.add(helper);
 
 geometry = new PlaneGeometry(maxX, maxX / 2);
 material = new MeshStandardMaterial({ color: groundColor, side: DoubleSide });
-ground = new Mesh(geometry, material);
+const ground = new Mesh(geometry, material);
 ground.position.set(0, -1, maxX / 4);
 ground.rotation.x = Math.PI / 2;
 ground.receiveShadow = true;
@@ -102,13 +94,6 @@ const cube = new Mesh(geometry, material);
 cube.position.set(0, 50, 0);
 cube.receiveShadow = false;
 cube.castShadow = true;
-helpers.add(cube);
-
-const cube2 = new Mesh(geometry, material);
-cube2.position.set(150, 50, 0);
-cube2.receiveShadow = false;
-cube2.castShadow = true;
-helpers.add(cube2);
 
 // --------------------------------
 // GUI
@@ -121,7 +106,7 @@ const gui = new GUI({
 const setupGUI = () => {
   const params = {
     groundColor,
-    helpersEnabled,
+    gridHelperEnabled,
   };
   gui
     .addColor(params, "groundColor")
@@ -130,13 +115,13 @@ const setupGUI = () => {
       ground.material.setValues({ color: value });
     });
   gui
-    .add(params, "helpersEnabled")
-    .name("enable helpers")
+    .add(params, "gridHelperEnabled")
+    .name("enable grid help")
     .onChange((value) => {
       if (value === true) {
-        scene.add(helpers);
+        scene.add(gridHelper);
       } else {
-        scene.remove(helpers);
+        scene.remove(gridHelper);
       }
     });
 };
