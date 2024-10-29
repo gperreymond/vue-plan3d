@@ -60,17 +60,13 @@ const updateGroup = (update: boolean = false) => {
   box.rotation.set(0, params.flip === true ? Math.PI / 2 : 0, 0);
   group.add(box);
   if (params.flip === false) {
-    group.position.set(
-      params.width / 2 + params.x,
-      params.height / 2 + params.z,
-      params.thickness / 2 + params.y,
-    );
+    group.position.setX(params.width / 2 + params.x);
+    group.position.setY(params.height / 2 + params.z);
+    group.position.setZ(params.thickness / 2 + params.y);
   } else {
-    group.position.set(
-      params.thickness / 2 + params.x,
-      params.height / 2 + params.z,
-      params.width / 2 + params.y,
-    );
+    group.position.setX(params.thickness / 2 + params.x);
+    group.position.setY(params.height / 2 + params.z);
+    group.position.setZ(params.width / 2 + params.y);
   }
 };
 updateGroup();

@@ -112,6 +112,9 @@ const updateGroup = (update: boolean = false) => {
     group.add(rail);
     rails.push(rail);
   }
+  group.position.setX(params.x);
+  group.position.setY(params.y);
+  group.position.setZ(params.z);
 };
 updateGroup();
 
@@ -119,37 +122,6 @@ const onChangeHandler = async () => {
   await HorizontalFencesService.update(_id, params);
   await updateGroup(true);
 };
-
-// for (let i = 0; i < numberOfPosts; i++) {
-//   const post = new Mesh(postGeometry, postMaterial);
-//   post.position.set(i * spacing - totalWidth / 2, postHeight / 2, 0);
-//   post.castShadow = true;
-//   post.receiveShadow = true;
-//   group.add(post);
-//   posts.push(post);
-// }
-
-// Create the horizontal rails
-// railGeometry = new BoxGeometry(totalWidth, railHeight, railThickness);
-// railMaterial = new MeshStandardMaterial({
-//   color: props.data.railColor || 0x8b4513,
-// });
-
-// Calculate rail vertical spacing to evenly distribute the rails along the post height
-// for (let j = 0; j < numberOfRails; j++) {
-//   const rail = new Mesh(railGeometry, railMaterial);
-//   const railSpacing = postHeight / (numberOfRails + 1); // Evenly space the rails vertically
-//   rail.position.set(0, railSpacing * (j + 1), 0);
-//   rail.castShadow = true;
-//   rail.receiveShadow = true;
-//   group.add(rail);
-//   rails.push(rail);
-// }
-
-// Function to calculate the spacing between posts
-// const calculatePostSpacing = () => {
-//   return spacing;
-// };
 
 // GUI configuration
 const gui = new GUI({
@@ -162,6 +134,27 @@ const setupGUI = () => {
   gui
     .add(params, "numberOfPosts")
     .name("numberOfPosts")
+    .onChange(onChangeHandler);
+  gui
+    .add(params, "numberOfRails")
+    .name("numberOfRails")
+    .onChange(onChangeHandler);
+  gui.add(params, "railWidth").name("railWidth").onChange(onChangeHandler);
+  gui.add(params, "railHeight").name("railHeight").onChange(onChangeHandler);
+  gui
+    .add(params, "railThickness")
+    .name("railThickness")
+    .onChange(onChangeHandler);
+  gui.add(params, "x").name("x").onChange(onChangeHandler);
+  gui.add(params, "y").name("y").onChange(onChangeHandler);
+  gui.add(params, "z").name("z").onChange(onChangeHandler);
+  gui
+    .addColor(params, "postColor")
+    .name("post color")
+    .onChange(onChangeHandler);
+  gui
+    .addColor(params, "railColor")
+    .name("rail color")
     .onChange(onChangeHandler);
   // const spacingLabel = gui
   //   .add({ postSpacing: calculatePostSpacing() }, "postSpacing")
