@@ -5,7 +5,7 @@ import { BoxGeometry, Group, Mesh, MeshStandardMaterial } from "three";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { onMounted } from "vue";
 
-import WallService from "../../services/WallService";
+import WallsService from "../../services/WallsService";
 
 const props = defineProps({
   data: {
@@ -76,7 +76,7 @@ const updateGroup = (update: boolean = false) => {
 updateGroup();
 
 const onChangeHandler = async () => {
-  await WallService.update(_id, params);
+  await WallsService.update(_id, params);
   await updateGroup(true);
 };
 
@@ -88,6 +88,8 @@ const gui = new GUI({
   autoPlace: false,
   title: `Walls - ${name}`,
 });
+gui.show();
+gui.close();
 const setupGUI = () => {
   gui.add(params, "width").name("width").onChange(onChangeHandler);
   gui.add(params, "height").name("height").onChange(onChangeHandler);

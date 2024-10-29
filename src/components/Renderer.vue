@@ -18,6 +18,7 @@ const gui = new GUI({
   autoPlace: false,
   title: "Renderer",
 });
+gui.show();
 const setupGUI = () => {
   const params = {
     rendererClearColor,

@@ -103,6 +103,7 @@ const gui = new GUI({
   autoPlace: false,
   title: "Scene",
 });
+gui.show();
 const setupGUI = () => {
   const params = {
     groundColor,

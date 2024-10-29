@@ -8,6 +8,12 @@
   <Renderer ref="rendererRef" />
   <!-- items -->
   <Wall v-for="data in walls" :key="data.id" :data="data" :ref="setItemsRef" />
+  <HorizontalFence
+    v-for="data in horizontalFences"
+    :key="data.id"
+    :data="data"
+    :ref="setItemsRef"
+  />
 </template>
 
 <style>
@@ -27,13 +33,15 @@ import Scene from "./components/Scene.vue";
 import Camera from "./components/Camera.vue";
 import Wall from "./components/items/Wall.vue";
 import HorizontalFence from "./components/items/HorizontalFence.vue";
-import ProjectService from "./services/ProjectService";
+import ProjectsService from "./services/ProjectsService";
 
 const walls = ref([]);
+const horizontalFences = ref([]);
 const fetchProject = async (id) => {
   try {
-    const response = await ProjectService.get(id);
+    const response = await ProjectsService.get(id);
     walls.value = response.data.walls;
+    horizontalFences.value = response.data.horizontalFences;
   } catch (err) {
     console.error("fetchProject", err.message);
   }
@@ -69,7 +77,8 @@ const animate = () => {
 onMounted(async () => {
   console.log("App", "onMounted");
   await fetchProject(1);
-  console.log("App", "Walls", walls.value);
+  console.log("App", "walls", walls.value);
+  console.log("App", "horizontalFences", horizontalFences.value);
   // get all engine
   engine.renderer = rendererRef.value.renderer;
   engine.scene = sceneRef.value.scene;
