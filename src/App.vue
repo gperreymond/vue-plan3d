@@ -7,6 +7,12 @@
   <Camera ref="cameraRef" />
   <Renderer ref="rendererRef" />
   <!-- items -->
+  <Ground
+    v-for="data in grounds"
+    :key="data.id"
+    :data="data"
+    :ref="setItemsRef"
+  />
   <Wall v-for="data in walls" :key="data.id" :data="data" :ref="setItemsRef" />
   <HorizontalFence
     v-for="data in horizontalFences"
@@ -26,20 +32,24 @@ body {
 <script setup lan="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+// import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { filter } from "lodash";
 
 import Renderer from "./components/Renderer.vue";
 import Scene from "./components/Scene.vue";
 import Camera from "./components/Camera.vue";
 import Wall from "./components/items/Wall.vue";
+import Ground from "./components/items/Ground.vue";
 import HorizontalFence from "./components/items/HorizontalFence.vue";
 import ProjectsService from "./services/ProjectsService";
 
+const grounds = ref([]);
 const walls = ref([]);
 const horizontalFences = ref([]);
 const fetchProject = async (id) => {
   try {
     const response = await ProjectsService.get(id);
+    grounds.value = response.data.grounds;
     walls.value = response.data.walls;
     horizontalFences.value = response.data.horizontalFences;
   } catch (err) {
@@ -98,6 +108,14 @@ onMounted(async () => {
   controls.enableZoom = true;
   // Go pikachu!
   sceneContainer.value.appendChild(engine.renderer.domElement);
+
+  // const loader = new FBXLoader();
+  // loader.load('public/assets/quiver_tree_02_4k.fbx/quiver_tree_02_4k.fbx', function(item) {
+  //   engine.scene.add(item);
+  // }, undefined, function ( error ) {
+  //   console.error( error );
+  // });
+
   animate();
 });
 

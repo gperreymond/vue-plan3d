@@ -52,10 +52,16 @@ const params = {
   y,
   z,
   flip,
+  // calculated
+  postSpacing: 0,
 };
 
 const posts: Mesh<any, any, Object3DEventMap>[] = [];
 const rails: Mesh<any, any, Object3DEventMap>[] = [];
+
+const calculatePostSpacing = () => {
+  return (params.railWidth - params.postWidth) / (params.numberOfPosts - 1);
+};
 
 const generatePost = (): Mesh => {
   const geometry = new BoxGeometry(
@@ -94,11 +100,11 @@ const updateGroup = (update: boolean = false) => {
     });
   }
   // Calculate the spacing between posts
-  const spacing = params.railWidth / (params.numberOfPosts - 1);
+  const spacing = calculatePostSpacing();
   for (let i = 0; i < params.numberOfPosts; i++) {
     const post = generatePost();
     post.position.set(
-      i * spacing - params.railWidth / 2,
+      i * spacing - (params.railWidth - params.postWidth) / 2,
       params.postHeight / 2,
       params.postThickness / 2,
     );
@@ -139,6 +145,12 @@ const setupGUI = () => {
     .add(params, "numberOfRails")
     .name("numberOfRails")
     .onChange(onChangeHandler);
+  gui.add(params, "postWidth").name("postWidth").onChange(onChangeHandler);
+  gui.add(params, "postHeight").name("postHeight").onChange(onChangeHandler);
+  gui
+    .add(params, "postThickness")
+    .name("postThickness")
+    .onChange(onChangeHandler);
   gui.add(params, "railWidth").name("railWidth").onChange(onChangeHandler);
   gui.add(params, "railHeight").name("railHeight").onChange(onChangeHandler);
   gui
@@ -156,14 +168,12 @@ const setupGUI = () => {
     .addColor(params, "railColor")
     .name("rail color")
     .onChange(onChangeHandler);
-  // const spacingLabel = gui
-  //   .add({ postSpacing: calculatePostSpacing() }, "postSpacing")
-  //   .name("Post Spacing (m)")
-  //   .listen();
-  // spacingLabel.domElement.style.pointerEvents = "none";
-  // spacingLabel.domElement.style.color = "red";
-
-  // gui.add(props.data, "numberOfRails").name("Number of Rails");
+  const postSpacingLabel = gui
+    .add({ postSpacing: calculatePostSpacing().toFixed(2) }, "postSpacing")
+    .name("Post Spacing (m)")
+    .listen();
+  postSpacingLabel.domElement.style.pointerEvents = "none";
+  postSpacingLabel.domElement.style.color = "green";
 };
 
 defineExpose({

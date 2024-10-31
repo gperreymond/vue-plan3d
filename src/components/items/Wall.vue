@@ -60,13 +60,13 @@ const updateGroup = (update: boolean = false) => {
   box.rotation.set(0, params.flip === true ? Math.PI / 2 : 0, 0);
   group.add(box);
   if (params.flip === false) {
-    group.position.setX(params.width / 2 + params.x);
+    group.position.setX(params.x);
     group.position.setY(params.height / 2 + params.z);
     group.position.setZ(params.thickness / 2 + params.y);
   } else {
     group.position.setX(params.thickness / 2 + params.x);
     group.position.setY(params.height / 2 + params.z);
-    group.position.setZ(params.width / 2 + params.y);
+    group.position.setZ(params.y);
   }
 };
 updateGroup();
@@ -94,16 +94,13 @@ const setupGUI = () => {
   gui.add(params, "y").name("y").onChange(onChangeHandler);
   gui.add(params, "z").name("z").onChange(onChangeHandler);
   gui.add(params, "flip").name("flip").onChange(onChangeHandler);
-  gui
-    .addColor(params, "color")
-    .name("background color")
-    .onChange(onChangeHandler);
+  gui.addColor(params, "color").name("color").onChange(onChangeHandler);
   const surfaceLabel = gui
-    .add({ totalSurface: calculateTotalSurface() }, "totalSurface")
+    .add({ totalSurface: calculateTotalSurface().toFixed(2) }, "totalSurface")
     .name("Total surface (m²)")
     .listen();
   surfaceLabel.domElement.style.pointerEvents = "none";
-  surfaceLabel.domElement.style.color = "red";
+  surfaceLabel.domElement.style.color = "green";
 };
 
 defineExpose({

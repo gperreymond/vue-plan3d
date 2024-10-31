@@ -6,13 +6,11 @@ import {
   BoxGeometry,
   CameraHelper,
   DirectionalLight,
-  DoubleSide,
   GridHelper,
   HemisphereLight,
   HemisphereLightHelper,
   Mesh,
   MeshStandardMaterial,
-  PlaneGeometry,
   Scene,
 } from "three";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
@@ -21,11 +19,8 @@ import { onMounted } from "vue";
 const maxZ = 1000;
 const maxX = 3000;
 const diagonal = maxX * Math.sqrt(2);
-const groundColor = 0xbfeebf;
 
 const scene = new Scene();
-
-let material, geometry;
 
 // --------------------------------
 // Lights
@@ -66,31 +61,17 @@ gridHelper.position.x = 0;
 scene.add(gridHelper);
 
 const lightHelper = new HemisphereLightHelper(light, 100);
-
 const lightSecondHelper = new HemisphereLightHelper(lightSecond, 50);
-
 const cameraHelper = new CameraHelper(shadowLight.shadow.camera);
-
-// --------------------------------
-// Grounds
-// --------------------------------
-
-geometry = new PlaneGeometry(maxX, maxX / 2);
-material = new MeshStandardMaterial({ color: groundColor, side: DoubleSide });
-const ground = new Mesh(geometry, material);
-ground.position.set(0, -1, maxX / 4);
-ground.rotation.x = Math.PI / 2;
-ground.receiveShadow = true;
-ground.castShadow = false;
-scene.add(ground);
 
 // --------------------------------
 // Cube for tests
 // --------------------------------
 
-geometry = new BoxGeometry(100, 100, 100);
-material = new MeshStandardMaterial({ color: 0x00ff00 });
-const cube = new Mesh(geometry, material);
+const cube = new Mesh(
+  new BoxGeometry(100, 100, 100),
+  new MeshStandardMaterial({ color: 0x00ff00 }),
+);
 cube.position.set(0, 50, 0);
 cube.receiveShadow = false;
 cube.castShadow = true;
@@ -106,15 +87,8 @@ const gui = new GUI({
 gui.show();
 const setupGUI = () => {
   const params = {
-    groundColor,
     gridHelperEnabled,
   };
-  gui
-    .addColor(params, "groundColor")
-    .name("background color")
-    .onChange((value) => {
-      ground.material.setValues({ color: value });
-    });
   gui
     .add(params, "gridHelperEnabled")
     .name("enable grid help")
