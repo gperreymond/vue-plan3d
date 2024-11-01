@@ -32,6 +32,7 @@ const z = props.data.z;
 const color = props.data.color;
 
 const params = {
+  name,
   width,
   height,
   x,
@@ -90,11 +91,12 @@ const onChangeHandler = async () => {
 
 const gui = new GUI({
   autoPlace: false,
-  title: `Grounds - ${name}`,
+  title: `Grounds - ${params.name}`,
 });
 gui.show();
 gui.close();
 const setupGUI = () => {
+  gui.add(params, "name").name("name").onChange(onChangeHandler);
   gui.add(params, "width").name("width").onChange(onChangeHandler);
   gui.add(params, "height").name("height").onChange(onChangeHandler);
   gui.add(params, "x").name("x").onChange(onChangeHandler);

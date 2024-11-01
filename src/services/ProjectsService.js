@@ -6,4 +6,7 @@ export default {
       `/projects/${id}?populate=grounds,walls,horizontalFences`,
     );
   },
+  update(id, data) {
+    return apiClient.put(`/projects/${id}`, data);
+  },
 };

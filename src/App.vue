@@ -3,9 +3,9 @@
   <div ref="sceneContainer" class="scene-container"></div>
   <div ref="guiContainer" class="gui-container"></div>
   <!-- components -->
-  <Scene ref="sceneRef" />
-  <Camera ref="cameraRef" />
-  <Renderer ref="rendererRef" />
+  <Scene v-if="project" ref="sceneRef" :data="project" />
+  <Camera v-if="project" ref="cameraRef" />
+  <Renderer v-if="project" ref="rendererRef" />
   <!-- items -->
   <Ground
     v-for="data in grounds"
@@ -43,12 +43,14 @@ import Ground from "./components/items/Ground.vue";
 import HorizontalFence from "./components/items/HorizontalFence.vue";
 import ProjectsService from "./services/ProjectsService";
 
+const project = ref(null);
 const grounds = ref([]);
 const walls = ref([]);
 const horizontalFences = ref([]);
 const fetchProject = async (id) => {
   try {
     const response = await ProjectsService.get(id);
+    project.value = response.data;
     grounds.value = response.data.grounds;
     walls.value = response.data.walls;
     horizontalFences.value = response.data.horizontalFences;

@@ -53,13 +53,15 @@ const params = {
   z,
   flip,
   // calculated
-  postSpacing: 0,
+  postsSpacing: "0",
+  postsLength: "0",
+  railsLength: "0",
 };
 
 const posts: Mesh<any, any, Object3DEventMap>[] = [];
 const rails: Mesh<any, any, Object3DEventMap>[] = [];
 
-const calculatePostSpacing = () => {
+const calculatePostsSpacing = () => {
   return (params.railWidth - params.postWidth) / (params.numberOfPosts - 1);
 };
 
@@ -100,7 +102,7 @@ const updateGroup = (update: boolean = false) => {
     });
   }
   // Calculate the spacing between posts
-  const spacing = calculatePostSpacing();
+  const spacing = calculatePostsSpacing();
   for (let i = 0; i < params.numberOfPosts; i++) {
     const post = generatePost();
     post.position.set(
@@ -121,6 +123,15 @@ const updateGroup = (update: boolean = false) => {
   group.position.setX(params.x);
   group.position.setY(params.y);
   group.position.setZ(params.z);
+  params.postsSpacing = spacing.toFixed(2);
+  params.postsLength = (
+    (params.numberOfPosts * params.postHeight) /
+    100
+  ).toFixed(2);
+  params.railsLength = (
+    (params.numberOfRails * params.railWidth) /
+    100
+  ).toFixed(2);
 };
 updateGroup();
 
@@ -168,12 +179,24 @@ const setupGUI = () => {
     .addColor(params, "railColor")
     .name("rail color")
     .onChange(onChangeHandler);
-  const postSpacingLabel = gui
-    .add({ postSpacing: calculatePostSpacing().toFixed(2) }, "postSpacing")
-    .name("Post Spacing (m)")
+  const postsSpacingLabel = gui
+    .add(params, "postsSpacing")
+    .name("posts spacing (m)")
     .listen();
-  postSpacingLabel.domElement.style.pointerEvents = "none";
-  postSpacingLabel.domElement.style.color = "green";
+  postsSpacingLabel.domElement.style.pointerEvents = "none";
+  postsSpacingLabel.domElement.style.color = "#a2db3c";
+  const postsLengthLabel = gui
+    .add(params, "postsLength")
+    .name("posts length (m)")
+    .listen();
+  postsLengthLabel.domElement.style.pointerEvents = "none";
+  postsLengthLabel.domElement.style.color = "#a2db3c";
+  const railsLengthLabel = gui
+    .add(params, "railsLength")
+    .name("rails length (m)")
+    .listen();
+  railsLengthLabel.domElement.style.pointerEvents = "none";
+  railsLengthLabel.domElement.style.color = "#a2db3c";
 };
 
 defineExpose({

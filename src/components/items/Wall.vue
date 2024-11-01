@@ -34,6 +34,12 @@ const params = {
   z,
   flip,
   color,
+  // calculated
+  totalSurface: "0",
+};
+
+const calculateTotalSurface = () => {
+  return (params.width / 100) * (params.height / 100);
 };
 
 let box: Mesh;
@@ -68,16 +74,13 @@ const updateGroup = (update: boolean = false) => {
     group.position.setY(params.height / 2 + params.z);
     group.position.setZ(params.y);
   }
+  params.totalSurface = calculateTotalSurface().toFixed(2);
 };
 updateGroup();
 
 const onChangeHandler = async () => {
   await WallsService.update(_id, params);
   await updateGroup(true);
-};
-
-const calculateTotalSurface = () => {
-  return (width / 100) * (height / 100);
 };
 
 const gui = new GUI({
@@ -96,11 +99,11 @@ const setupGUI = () => {
   gui.add(params, "flip").name("flip").onChange(onChangeHandler);
   gui.addColor(params, "color").name("color").onChange(onChangeHandler);
   const surfaceLabel = gui
-    .add({ totalSurface: calculateTotalSurface().toFixed(2) }, "totalSurface")
+    .add(params, "totalSurface")
     .name("Total surface (m²)")
     .listen();
   surfaceLabel.domElement.style.pointerEvents = "none";
-  surfaceLabel.domElement.style.color = "green";
+  surfaceLabel.domElement.style.color = "#a2db3c";
 };
 
 defineExpose({

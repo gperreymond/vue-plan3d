@@ -16,9 +16,29 @@ import {
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { onMounted } from "vue";
 
+import ProjectsService from "../services/ProjectsService";
+
+const props = defineProps({
+  data: {
+    type: Object,
+    required: true,
+  },
+});
+
+const _id = props.data.id;
+const name = props.data.name;
+const width = props.data.width;
+const gridHelperEnabled = true;
+
 const maxZ = 1000;
 const maxX = 3000;
 const diagonal = maxX * Math.sqrt(2);
+
+const params = {
+  width,
+  // calculated
+  gridHelperEnabled,
+};
 
 const scene = new Scene();
 
@@ -51,14 +71,27 @@ scene.add(shadowLight);
 // Helpers
 // --------------------------------
 
+let gridHelper: GridHelper;
+const updateHelpers = (update: boolean = false) => {
+  if (update === true) {
+    scene.remove(gridHelper);
+  }
+  if (params.gridHelperEnabled === true) {
+    gridHelper = new GridHelper(
+      params.width,
+      params.width / 100,
+      0x0000ff,
+      0xe8e5e1,
+    );
+    gridHelper.position.y = 0;
+    gridHelper.position.x = 0;
+    scene.add(gridHelper);
+  }
+};
+updateHelpers();
+
 const axesHelper = new AxesHelper(maxZ);
 axesHelper.setColors(0x0000ff, 0x0000ff, 0x0000ff);
-
-const gridHelperEnabled = true;
-const gridHelper = new GridHelper(maxX, maxX / 100, 0x0000ff, 0xe8e5e1);
-gridHelper.position.y = 0;
-gridHelper.position.x = 0;
-scene.add(gridHelper);
 
 const lightHelper = new HemisphereLightHelper(light, 100);
 const lightSecondHelper = new HemisphereLightHelper(lightSecond, 50);
@@ -80,25 +113,22 @@ cube.castShadow = true;
 // GUI
 // --------------------------------
 
+const onChangeHandler = async () => {
+  await ProjectsService.update(_id, params);
+  await updateHelpers(true);
+};
+
 const gui = new GUI({
   autoPlace: false,
   title: "Scene",
 });
 gui.show();
 const setupGUI = () => {
-  const params = {
-    gridHelperEnabled,
-  };
+  gui.add(params, "width").name("width").onChange(onChangeHandler);
   gui
     .add(params, "gridHelperEnabled")
-    .name("enable grid help")
-    .onChange((value) => {
-      if (value === true) {
-        scene.add(gridHelper);
-      } else {
-        scene.remove(gridHelper);
-      }
-    });
+    .name("enable grid helper")
+    .onChange(onChangeHandler);
 };
 
 defineExpose({
@@ -107,7 +137,7 @@ defineExpose({
 });
 
 onMounted(() => {
-  console.log("Scene", "onMounted");
+  console.log("Scene", "onMounted", name, _id);
   setupGUI();
 });
 </script>
