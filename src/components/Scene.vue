@@ -19,6 +19,10 @@ import { onMounted } from "vue";
 import ProjectsService from "../services/ProjectsService";
 
 const props = defineProps({
+  parentGUI: {
+    type: GUI,
+    required: true,
+  },
   data: {
     type: Object,
     required: true,
@@ -28,7 +32,8 @@ const props = defineProps({
 const _id = props.data.id;
 const name = props.data.name;
 const width = props.data.width;
-const gridHelperEnabled = true;
+const gridHelperEnabled = false;
+const axesHelperEnabled = false;
 
 const maxZ = 1000;
 const maxX = 3000;
@@ -38,6 +43,7 @@ const params = {
   width,
   // calculated
   gridHelperEnabled,
+  axesHelperEnabled,
 };
 
 const scene = new Scene();
@@ -72,9 +78,16 @@ scene.add(shadowLight);
 // --------------------------------
 
 let gridHelper: GridHelper;
+let axesHelper: AxesHelper;
 const updateHelpers = (update: boolean = false) => {
   if (update === true) {
     scene.remove(gridHelper);
+    scene.remove(axesHelper);
+  }
+  if (params.axesHelperEnabled === true) {
+    axesHelper = new AxesHelper(maxZ);
+    axesHelper.setColors(0x0000ff, 0x0000ff, 0x0000ff);
+    scene.add(axesHelper);
   }
   if (params.gridHelperEnabled === true) {
     gridHelper = new GridHelper(
@@ -89,9 +102,6 @@ const updateHelpers = (update: boolean = false) => {
   }
 };
 updateHelpers();
-
-const axesHelper = new AxesHelper(maxZ);
-axesHelper.setColors(0x0000ff, 0x0000ff, 0x0000ff);
 
 const lightHelper = new HemisphereLightHelper(light, 100);
 const lightSecondHelper = new HemisphereLightHelper(lightSecond, 50);
@@ -121,19 +131,24 @@ const onChangeHandler = async () => {
 const gui = new GUI({
   autoPlace: false,
   title: "Scene",
+  parent: props.parentGUI,
 });
 gui.show();
+gui.close();
 const setupGUI = () => {
   gui.add(params, "width").name("width").onChange(onChangeHandler);
   gui
     .add(params, "gridHelperEnabled")
     .name("enable grid helper")
     .onChange(onChangeHandler);
+  gui
+    .add(params, "axesHelperEnabled")
+    .name("enable axes helper")
+    .onChange(onChangeHandler);
 };
 
 defineExpose({
   scene,
-  gui,
 });
 
 onMounted(() => {

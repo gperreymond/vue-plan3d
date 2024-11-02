@@ -5,6 +5,13 @@ import { PCFSoftShadowMap, WebGLRenderer } from "three";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { onMounted } from "vue";
 
+const props = defineProps({
+  parentGUI: {
+    type: GUI,
+    required: true,
+  },
+});
+
 const rendererClearColor = 0x87ceeb;
 
 const renderer = new WebGLRenderer({ antialias: true });
@@ -14,11 +21,13 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = PCFSoftShadowMap;
 renderer.setClearColor(0x87ceeb);
 
-const gui = new GUI({
+const gui: GUI = new GUI({
   autoPlace: false,
   title: "Renderer",
+  parent: props.parentGUI,
 });
 gui.show();
+gui.close();
 const setupGUI = () => {
   const params = {
     rendererClearColor,
@@ -38,7 +47,6 @@ window.onresize = onresizeHandler;
 
 defineExpose({
   renderer,
-  gui,
 });
 
 onMounted(async () => {

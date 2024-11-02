@@ -2,50 +2,72 @@
   <!-- containers -->
   <div ref="sceneContainer" class="scene-container"></div>
   <div ref="guiContainer" class="gui-container"></div>
+  <div class="buttons-container">
+    <button @click="addNewWallHandler">New Wall</button>
+    <button @click="addNewBlockHandler">New Block</button>
+  </div>
   <!-- components -->
-  <Scene v-if="project" ref="sceneRef" :data="project" />
   <Camera v-if="project" ref="cameraRef" />
-  <Renderer v-if="project" ref="rendererRef" />
+  <Scene
+    v-if="project"
+    ref="sceneRef"
+    :data="project"
+    :parentGUI="gui.folders[0]"
+  />
+  <Renderer v-if="project" ref="rendererRef" :parentGUI="gui.folders[0]" />
   <!-- items -->
   <Ground
     v-for="data in grounds"
     :key="data.id"
     :data="data"
     :ref="setItemsRef"
+    :parentGUI="gui.folders[1]"
   />
-  <Wall v-for="data in walls" :key="data.id" :data="data" :ref="setItemsRef" />
+  <Wall
+    v-for="data in walls"
+    :key="data.id"
+    :data="data"
+    :ref="setItemsRef"
+    :parentGUI="gui.folders[2]"
+  />
+  <Block
+    v-for="data in blocks"
+    :key="data.id"
+    :data="data"
+    :ref="setItemsRef"
+    :parentGUI="gui.folders[3]"
+  />
   <HorizontalFence
     v-for="data in horizontalFences"
     :key="data.id"
     :data="data"
     :ref="setItemsRef"
+    :parentGUI="gui.folders[4]"
   />
 </template>
-
-<style>
-body {
-  margin: 0;
-  padding: 0;
-}
-</style>
 
 <script setup lan="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 // import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-import { filter } from "lodash";
 
 import Renderer from "./components/Renderer.vue";
 import Scene from "./components/Scene.vue";
 import Camera from "./components/Camera.vue";
 import Wall from "./components/items/Wall.vue";
 import Ground from "./components/items/Ground.vue";
+import Block from "./components/items/Block.vue";
 import HorizontalFence from "./components/items/HorizontalFence.vue";
+
 import ProjectsService from "./services/ProjectsService";
+import BlocksService from "./services/BlocksService";
+import WallsService from "./services/WallsService";
 
 const project = ref(null);
 const grounds = ref([]);
 const walls = ref([]);
+const blocks = ref([]);
 const horizontalFences = ref([]);
 const fetchProject = async (id) => {
   try {
@@ -53,6 +75,7 @@ const fetchProject = async (id) => {
     project.value = response.data;
     grounds.value = response.data.grounds;
     walls.value = response.data.walls;
+    blocks.value = response.data.blocks;
     horizontalFences.value = response.data.horizontalFences;
   } catch (err) {
     console.error("fetchProject", err.message);
@@ -72,7 +95,6 @@ const setItemsRef = (el) => {
 const guiContainer = ref(null);
 
 const engine = {
-  gui: {},
   renderer: false,
   scene: false,
   camera: false,
@@ -86,22 +108,37 @@ const animate = () => {
   engine.renderer.render(engine.scene, engine.camera);
 };
 
+const gui = new GUI({
+  autoPlace: false,
+  title: `PROJET`,
+});
+gui.addFolder("OPTIONS");
+gui.addFolder("GROUNDS");
+gui.addFolder("WALLS");
+gui.addFolder("BLOCKS");
+gui.addFolder("HORIZONTAL FENCES");
+gui.folders.map((item) => {
+  item.show();
+  item.close();
+});
+
+const addNewWallHandler = async () => {
+  await WallsService.create(1);
+  await fetchProject(1);
+};
+
+const addNewBlockHandler = async () => {};
+
 onMounted(async () => {
   console.log("App", "onMounted");
   await fetchProject(1);
-  console.log("App", "walls", walls.value);
-  console.log("App", "horizontalFences", horizontalFences.value);
+  guiContainer.value.appendChild(gui.domElement);
   // get all engine
   engine.renderer = rendererRef.value.renderer;
   engine.scene = sceneRef.value.scene;
   engine.camera = cameraRef.value.camera;
-  // plabe all gui
-  guiContainer.value.appendChild(rendererRef.value.gui.domElement);
-  guiContainer.value.appendChild(sceneRef.value.gui.domElement);
-  // add all items in the scene
   itemsRef.value.map((item) => {
     engine.scene.add(item.group);
-    guiContainer.value.appendChild(item.gui.domElement);
   });
   // controls
   controls = new OrbitControls(engine.camera, engine.renderer.domElement);
@@ -129,6 +166,13 @@ onUnmounted(async () => {
 });
 </script>
 
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+</style>
+
 <style scoped>
 .scene-container {
   width: 100%;
@@ -137,7 +181,12 @@ onUnmounted(async () => {
 }
 .gui-container {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 10px;
+  top: 10px;
+}
+.buttons-container {
+  position: absolute;
+  left: 10px;
+  top: 10px;
 }
 </style>

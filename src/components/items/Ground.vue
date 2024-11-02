@@ -13,9 +13,13 @@ import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { onMounted } from "vue";
 
 import GroundsService from "../../services/GroundsService";
-import { Grass, Gravel, SwimmingPool } from "../textures/index.ts";
+// import { Grass, Gravel, SwimmingPool } from "../textures/index.ts";
 
 const props = defineProps({
+  parentGUI: {
+    type: GUI,
+    required: true,
+  },
   data: {
     type: Object,
     required: true,
@@ -39,23 +43,29 @@ const params = {
   y,
   z,
   color,
+  // calculated
+  totalSurface: "0",
+};
+
+const calculateTotalSurface = () => {
+  return (params.width / 100) * (params.height / 100);
 };
 
 let box: Mesh;
 const generateItem = (): Mesh => {
   let texture: Texture | undefined;
-  switch (_id) {
-    case 1:
-      texture = Grass(params.width, params.height);
-      break;
-    case 2:
-      texture = Gravel(params.width, params.height);
-      break;
-    case 3:
-      texture = SwimmingPool(params.width, params.height);
-      break;
-    default:
-  }
+  // switch (_id) {
+  //   case 1:
+  //     texture = Grass(params.width, params.height);
+  //     break;
+  //   case 2:
+  //     texture = Gravel(params.width, params.height);
+  //     break;
+  //   case 3:
+  //     texture = SwimmingPool(params.width, params.height);
+  //     break;
+  //   default:
+  // }
   const item = new Mesh(
     new PlaneGeometry(params.width, params.height),
     new MeshStandardMaterial({
@@ -81,6 +91,7 @@ const updateGroup = (update: boolean = false) => {
     box = generateItem();
   }
   group.add(box);
+  params.totalSurface = calculateTotalSurface().toFixed(2);
 };
 updateGroup();
 
@@ -91,7 +102,8 @@ const onChangeHandler = async () => {
 
 const gui = new GUI({
   autoPlace: false,
-  title: `Grounds - ${params.name}`,
+  title: params.name,
+  parent: props.parentGUI,
 });
 gui.show();
 gui.close();
@@ -106,11 +118,16 @@ const setupGUI = () => {
     .addColor(params, "color")
     .name("background color")
     .onChange(onChangeHandler);
+  const surfaceLabel = gui
+    .add(params, "totalSurface")
+    .name("Total surface (m²)")
+    .listen();
+  surfaceLabel.domElement.style.pointerEvents = "none";
+  surfaceLabel.domElement.style.color = "#a2db3c";
 };
 
 defineExpose({
   group,
-  gui,
 });
 
 onMounted(async () => {

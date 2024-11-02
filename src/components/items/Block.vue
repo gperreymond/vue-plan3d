@@ -5,7 +5,7 @@ import { BoxGeometry, Group, Mesh, MeshStandardMaterial } from "three";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { onMounted } from "vue";
 
-import WallsService from "../../services/WallsService";
+import BlocksService from "../../services/BlocksService";
 
 const props = defineProps({
   parentGUI: {
@@ -26,7 +26,6 @@ const thickness = props.data.thickness;
 const x = props.data.x;
 const y = props.data.y;
 const z = props.data.z;
-const flip = props.data.flip;
 const color = props.data.color;
 
 const params = {
@@ -37,7 +36,6 @@ const params = {
   x,
   y,
   z,
-  flip,
   color,
   // calculated
   totalSurface: "0",
@@ -51,8 +49,8 @@ let box: Mesh;
 const generateItem = (): Mesh => {
   const geometry = new BoxGeometry(
     params.width,
-    params.height,
     params.thickness,
+    params.height,
   );
   const material = new MeshStandardMaterial({ color: params.color });
   const item = new Mesh(geometry, material);
@@ -68,23 +66,16 @@ const updateGroup = (update: boolean = false) => {
     group.remove(box);
     box = generateItem();
   }
-  box.rotation.set(0, params.flip === true ? Math.PI / 2 : 0, 0);
   group.add(box);
-  if (params.flip === false) {
-    group.position.setX(params.x);
-    group.position.setY(params.height / 2 + params.z);
-    group.position.setZ(params.thickness / 2 + params.y);
-  } else {
-    group.position.setX(params.thickness / 2 + params.x);
-    group.position.setY(params.height / 2 + params.z);
-    group.position.setZ(params.y);
-  }
+  group.position.setX(params.x);
+  group.position.setY(params.thickness / 2 + params.z);
+  group.position.setZ(params.height / 2 + params.y);
   params.totalSurface = calculateTotalSurface().toFixed(2);
 };
 updateGroup();
 
 const onChangeHandler = async () => {
-  await WallsService.update(_id, params);
+  await BlocksService.update(_id, params);
   await updateGroup(true);
 };
 
@@ -103,7 +94,6 @@ const setupGUI = () => {
   gui.add(params, "x").name("x").onChange(onChangeHandler);
   gui.add(params, "y").name("y").onChange(onChangeHandler);
   gui.add(params, "z").name("z").onChange(onChangeHandler);
-  gui.add(params, "flip").name("flip").onChange(onChangeHandler);
   gui.addColor(params, "color").name("color").onChange(onChangeHandler);
   const surfaceLabel = gui
     .add(params, "totalSurface")
@@ -118,7 +108,7 @@ defineExpose({
 });
 
 onMounted(async () => {
-  console.log("Wall", "onMounted", name, _id);
+  console.log("Block", "onMounted", name, _id);
   setupGUI();
 });
 </script>

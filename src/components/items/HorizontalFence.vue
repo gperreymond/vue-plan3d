@@ -14,6 +14,10 @@ import { onMounted } from "vue";
 import HorizontalFencesService from "../../services/HorizontalFencesService";
 
 const props = defineProps({
+  parentGUI: {
+    type: GUI,
+    required: true,
+  },
   data: {
     type: Object,
     required: true,
@@ -123,7 +127,7 @@ const updateGroup = (update: boolean = false) => {
   group.position.setX(params.x);
   group.position.setY(params.y);
   group.position.setZ(params.z);
-  params.postsSpacing = spacing.toFixed(2);
+  params.postsSpacing = (spacing / 100).toFixed(2);
   params.postsLength = (
     (params.numberOfPosts * params.postHeight) /
     100
@@ -143,7 +147,8 @@ const onChangeHandler = async () => {
 // GUI configuration
 const gui = new GUI({
   autoPlace: false,
-  title: `HorizontalFences - ${name}`,
+  title: name,
+  parent: props.parentGUI,
 });
 gui.show();
 gui.close();
@@ -201,7 +206,6 @@ const setupGUI = () => {
 
 defineExpose({
   group,
-  gui,
 });
 
 onMounted(() => {
