@@ -20,6 +20,10 @@ const props = defineProps({
     type: GUI,
     required: true,
   },
+  sceneWidth: {
+    type: Number,
+    required: true,
+  },
   data: {
     type: Object,
     required: true,
@@ -75,9 +79,6 @@ const generateItem = (): Mesh => {
     }),
   );
   item.rotation.x = Math.PI / 2;
-  item.position.setX(params.x);
-  item.position.setY(params.z);
-  item.position.setZ(params.y);
   item.receiveShadow = true;
   item.castShadow = false;
   return item;
@@ -90,6 +91,11 @@ const updateGroup = (update: boolean = false) => {
     group.remove(box);
     box = generateItem();
   }
+  const translateX = (-props.sceneWidth + params.width) / 2;
+  const translateY = (-props.sceneWidth + params.height) / 2;
+  group.position.setX(translateX + params.x);
+  group.position.setY(params.z);
+  group.position.setZ(translateY + params.y);
   group.add(box);
   params.totalSurface = calculateTotalSurface().toFixed(2);
 };

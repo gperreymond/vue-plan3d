@@ -12,6 +12,10 @@ const props = defineProps({
     type: GUI,
     required: true,
   },
+  sceneWidth: {
+    type: Number,
+    required: true,
+  },
   data: {
     type: Object,
     required: true,
@@ -67,9 +71,11 @@ const updateGroup = (update: boolean = false) => {
     box = generateItem();
   }
   group.add(box);
-  group.position.setX(params.x);
+  const translateX = (-props.sceneWidth + params.width) / 2;
+  const translateY = (-props.sceneWidth + params.height) / 2;
+  group.position.setX(translateX + params.x);
   group.position.setY(params.thickness / 2 + params.z);
-  group.position.setZ(params.height / 2 + params.y);
+  group.position.setZ(translateY + params.y);
   params.totalSurface = calculateTotalSurface().toFixed(2);
 };
 updateGroup();

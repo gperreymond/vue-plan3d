@@ -35,10 +35,6 @@ const width = props.data.width;
 const gridHelperEnabled = false;
 const axesHelperEnabled = false;
 
-const maxZ = 1000;
-const maxX = 3000;
-const diagonal = maxX * Math.sqrt(2);
-
 const params = {
   width,
   // calculated
@@ -53,24 +49,24 @@ const scene = new Scene();
 // --------------------------------
 
 const light = new HemisphereLight(0xffffff, 0x080808, 1);
-light.position.set(-diagonal / 4, 2 * maxZ, -diagonal / 4);
+light.position.set(-width / 2, 2000, -width / 2);
 scene.add(light);
 
 const lightSecond = new HemisphereLight(0xffffff, 0x080808, 1);
-lightSecond.position.set(-diagonal / 4, maxZ / 2, diagonal / 4);
+lightSecond.position.set(-width / 2, 500, 0);
 scene.add(lightSecond);
 
 const shadowLight = new DirectionalLight(0xffffff, 0.5);
-shadowLight.position.set(-diagonal / 4, 2 * maxZ, -diagonal / 4);
+shadowLight.position.set(-width / 2, 2000, -width / 2);
 shadowLight.castShadow = true;
-shadowLight.shadow.mapSize.width = maxX;
-shadowLight.shadow.mapSize.height = maxX;
+shadowLight.shadow.mapSize.width = width;
+shadowLight.shadow.mapSize.height = width;
 shadowLight.shadow.camera.near = 0;
-shadowLight.shadow.camera.far = diagonal;
-shadowLight.shadow.camera.left = -maxX;
-shadowLight.shadow.camera.right = maxX;
-shadowLight.shadow.camera.top = maxX / 2;
-shadowLight.shadow.camera.bottom = -maxX / 2;
+shadowLight.shadow.camera.far = width;
+shadowLight.shadow.camera.left = -width;
+shadowLight.shadow.camera.right = width;
+shadowLight.shadow.camera.top = width / 2;
+shadowLight.shadow.camera.bottom = -width / 2;
 scene.add(shadowLight);
 
 // --------------------------------
@@ -85,8 +81,9 @@ const updateHelpers = (update: boolean = false) => {
     scene.remove(axesHelper);
   }
   if (params.axesHelperEnabled === true) {
-    axesHelper = new AxesHelper(maxZ);
-    axesHelper.setColors(0x0000ff, 0x0000ff, 0x0000ff);
+    axesHelper = new AxesHelper(1000);
+    axesHelper.position.set(-width / 2, 0, -width / 2);
+    axesHelper.setColors(0xff00ff, 0xff0000, 0x0000ff);
     scene.add(axesHelper);
   }
   if (params.gridHelperEnabled === true) {
@@ -106,6 +103,9 @@ updateHelpers();
 const lightHelper = new HemisphereLightHelper(light, 100);
 const lightSecondHelper = new HemisphereLightHelper(lightSecond, 50);
 const cameraHelper = new CameraHelper(shadowLight.shadow.camera);
+// scene.add(lightHelper);
+// scene.add(lightSecondHelper);
+// scene.add(cameraHelper);
 
 // --------------------------------
 // Cube for tests

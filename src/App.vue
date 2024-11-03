@@ -22,6 +22,7 @@
     :data="data"
     :ref="setItemsRef"
     :parentGUI="gui.folders[1]"
+    :sceneWidth="project.width"
   />
   <Wall
     v-for="data in walls"
@@ -29,6 +30,7 @@
     :data="data"
     :ref="setItemsRef"
     :parentGUI="gui.folders[2]"
+    :sceneWidth="project.width"
   />
   <Block
     v-for="data in blocks"
@@ -36,6 +38,7 @@
     :data="data"
     :ref="setItemsRef"
     :parentGUI="gui.folders[3]"
+    :sceneWidth="project.width"
   />
   <HorizontalFence
     v-for="data in horizontalFences"
@@ -76,7 +79,7 @@ const fetchProject = async (id) => {
     grounds.value = response.data.grounds;
     walls.value = response.data.walls;
     blocks.value = response.data.blocks;
-    horizontalFences.value = response.data.horizontalFences;
+    // horizontalFences.value = response.data.horizontalFences;
   } catch (err) {
     console.error("fetchProject", err.message);
   }

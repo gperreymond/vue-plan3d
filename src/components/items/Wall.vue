@@ -12,6 +12,10 @@ const props = defineProps({
     type: GUI,
     required: true,
   },
+  sceneWidth: {
+    type: Number,
+    required: true,
+  },
   data: {
     type: Object,
     required: true,
@@ -70,15 +74,18 @@ const updateGroup = (update: boolean = false) => {
   }
   box.rotation.set(0, params.flip === true ? Math.PI / 2 : 0, 0);
   group.add(box);
+  let translateX = 0;
+  let translateY = 0;
   if (params.flip === false) {
-    group.position.setX(params.x);
-    group.position.setY(params.height / 2 + params.z);
-    group.position.setZ(params.thickness / 2 + params.y);
+    translateX = (-props.sceneWidth + params.width) / 2;
+    translateY = (-props.sceneWidth + params.thickness) / 2;
   } else {
-    group.position.setX(params.thickness / 2 + params.x);
-    group.position.setY(params.height / 2 + params.z);
-    group.position.setZ(params.y);
+    translateX = (-props.sceneWidth + params.thickness) / 2;
+    translateY = (-props.sceneWidth + params.width) / 2;
   }
+  group.position.setX(translateX + params.x);
+  group.position.setY(params.height / 2 + params.z);
+  group.position.setZ(translateY + params.y);
   params.totalSurface = calculateTotalSurface().toFixed(2);
 };
 updateGroup();
