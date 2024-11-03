@@ -1,8 +1,8 @@
 import apiClient from "../plugins/axios";
 
 export default {
-  create() {
-    return apiClient.post(`/blocks`);
+  create(projectId) {
+    return apiClient.post(`/blocks`, { name: "New Block...", projectId });
   },
   get(id) {
     return apiClient.get(`/blocks/${id}`);

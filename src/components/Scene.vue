@@ -3,14 +3,12 @@
 <script setup lang="ts">
 import {
   AxesHelper,
-  BoxGeometry,
   CameraHelper,
   DirectionalLight,
+  Fog,
   GridHelper,
   HemisphereLight,
   HemisphereLightHelper,
-  Mesh,
-  MeshStandardMaterial,
   Scene,
 } from "three";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
@@ -43,6 +41,13 @@ const params = {
 };
 
 const scene = new Scene();
+
+// --------------------------------
+// FOG
+// --------------------------------
+
+// const rendererClearColor = 0x87ceeb;
+// scene.fog = new Fog(rendererClearColor, 0.1, 100);
 
 // --------------------------------
 // Lights
@@ -106,18 +111,6 @@ const cameraHelper = new CameraHelper(shadowLight.shadow.camera);
 // scene.add(lightHelper);
 // scene.add(lightSecondHelper);
 // scene.add(cameraHelper);
-
-// --------------------------------
-// Cube for tests
-// --------------------------------
-
-const cube = new Mesh(
-  new BoxGeometry(100, 100, 100),
-  new MeshStandardMaterial({ color: 0x00ff00 }),
-);
-cube.position.set(0, 50, 0);
-cube.receiveShadow = false;
-cube.castShadow = true;
 
 // --------------------------------
 // GUI

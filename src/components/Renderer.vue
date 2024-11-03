@@ -19,7 +19,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = PCFSoftShadowMap;
-renderer.setClearColor(0x87ceeb);
+renderer.setClearColor(rendererClearColor);
 
 const gui: GUI = new GUI({
   autoPlace: false,
@@ -39,11 +39,6 @@ const setupGUI = () => {
       renderer.setClearColor(value);
     });
 };
-
-const onresizeHandler = () => {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-};
-window.onresize = onresizeHandler;
 
 defineExpose({
   renderer,

@@ -5,6 +5,7 @@
   <div class="buttons-container">
     <button @click="addNewWallHandler">New Wall</button>
     <button @click="addNewBlockHandler">New Block</button>
+    <button @click="addNewGroundHandler">New Ground</button>
   </div>
   <!-- components -->
   <Camera v-if="project" ref="cameraRef" />
@@ -46,6 +47,7 @@
     :data="data"
     :ref="setItemsRef"
     :parentGUI="gui.folders[4]"
+    :sceneWidth="project.width"
   />
 </template>
 
@@ -66,6 +68,7 @@ import HorizontalFence from "./components/items/HorizontalFence.vue";
 import ProjectsService from "./services/ProjectsService";
 import BlocksService from "./services/BlocksService";
 import WallsService from "./services/WallsService";
+import GroundsService from "./services/GroundsService";
 
 const project = ref(null);
 const grounds = ref([]);
@@ -79,7 +82,7 @@ const fetchProject = async (id) => {
     grounds.value = response.data.grounds;
     walls.value = response.data.walls;
     blocks.value = response.data.blocks;
-    // horizontalFences.value = response.data.horizontalFences;
+    horizontalFences.value = response.data.horizontalFences;
   } catch (err) {
     console.error("fetchProject", err.message);
   }
@@ -130,7 +133,15 @@ const addNewWallHandler = async () => {
   await fetchProject(1);
 };
 
-const addNewBlockHandler = async () => {};
+const addNewBlockHandler = async () => {
+  await BlocksService.create(1);
+  await fetchProject(1);
+};
+
+const addNewGroundHandler = async () => {
+  await GroundsService.create(1);
+  await fetchProject(1);
+};
 
 onMounted(async () => {
   console.log("App", "onMounted");
@@ -191,5 +202,8 @@ body {
   position: absolute;
   left: 10px;
   top: 10px;
+}
+.buttons-container > button {
+  margin-right: 5px;
 }
 </style>

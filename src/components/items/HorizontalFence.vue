@@ -18,6 +18,10 @@ const props = defineProps({
     type: GUI,
     required: true,
   },
+  sceneWidth: {
+    type: Number,
+    required: true,
+  },
   data: {
     type: Object,
     required: true,
@@ -124,9 +128,6 @@ const updateGroup = (update: boolean = false) => {
     group.add(rail);
     rails.push(rail);
   }
-  group.position.setX(params.x);
-  group.position.setY(params.y);
-  group.position.setZ(params.z);
   params.postsSpacing = (spacing / 100).toFixed(2);
   params.postsLength = (
     (params.numberOfPosts * params.postHeight) /
@@ -136,6 +137,13 @@ const updateGroup = (update: boolean = false) => {
     (params.numberOfRails * params.railWidth) /
     100
   ).toFixed(2);
+  let translateX = 0;
+  let translateY = 0;
+  translateX = (-props.sceneWidth + params.railWidth) / 2;
+  translateY = -props.sceneWidth / 2;
+  group.position.setX(translateX + params.x);
+  group.position.setY(params.z);
+  group.position.setZ(translateY + params.y);
 };
 updateGroup();
 
