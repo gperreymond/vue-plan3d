@@ -41,12 +41,20 @@
     :parentGUI="gui.folders[3]"
     :sceneWidth="project.width"
   />
+  <Box
+    v-for="data in boxes"
+    :key="data.id"
+    :data="data"
+    :ref="setItemsRef"
+    :parentGUI="gui.folders[4]"
+    :sceneWidth="project.width"
+  />
   <HorizontalFence
     v-for="data in horizontalFences"
     :key="data.id"
     :data="data"
     :ref="setItemsRef"
-    :parentGUI="gui.folders[4]"
+    :parentGUI="gui.folders[5]"
     :sceneWidth="project.width"
   />
 </template>
@@ -57,23 +65,30 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 // import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
-import Renderer from "./components/Renderer.vue";
-import Scene from "./components/Scene.vue";
-import Camera from "./components/Camera.vue";
-import Wall from "./components/items/Wall.vue";
-import Ground from "./components/items/Ground.vue";
-import Block from "./components/items/Block.vue";
-import HorizontalFence from "./components/items/HorizontalFence.vue";
+import {
+  Block,
+  Box,
+  Camera,
+  Ground,
+  HorizontalFence,
+  Renderer,
+  Scene,
+  Wall,
+} from "./components";
+import {
+  BlocksService,
+  GroundsService,
+  ProjectsService,
+  WallsService,
+} from "./services";
 
-import ProjectsService from "./services/ProjectsService";
-import BlocksService from "./services/BlocksService";
-import WallsService from "./services/WallsService";
-import GroundsService from "./services/GroundsService";
+const APP_PROJECT_ID = 1;
 
 const project = ref(null);
 const grounds = ref([]);
 const walls = ref([]);
 const blocks = ref([]);
+const boxes = ref([]);
 const horizontalFences = ref([]);
 const fetchProject = async (id) => {
   try {
@@ -82,9 +97,10 @@ const fetchProject = async (id) => {
     grounds.value = response.data.grounds;
     walls.value = response.data.walls;
     blocks.value = response.data.blocks;
+    boxes.value = response.data.boxes;
     horizontalFences.value = response.data.horizontalFences;
   } catch (err) {
-    console.error("fetchProject", err.message);
+    console.error("App", "fetchProject", err.message);
   }
 };
 
@@ -122,6 +138,7 @@ gui.addFolder("OPTIONS");
 gui.addFolder("GROUNDS");
 gui.addFolder("WALLS");
 gui.addFolder("BLOCKS");
+gui.addFolder("BOXES");
 gui.addFolder("HORIZONTAL FENCES");
 gui.folders.map((item) => {
   item.show();
@@ -129,30 +146,34 @@ gui.folders.map((item) => {
 });
 
 const addNewWallHandler = async () => {
-  await WallsService.create(1);
-  await fetchProject(1);
+  await WallsService.create(APP_PROJECT_ID);
+  await fetchProject(APP_PROJECT_ID);
 };
 
 const addNewBlockHandler = async () => {
-  await BlocksService.create(1);
-  await fetchProject(1);
+  await BlocksService.create(APP_PROJECT_ID);
+  await fetchProject(APP_PROJECT_ID);
 };
 
 const addNewGroundHandler = async () => {
-  await GroundsService.create(1);
-  await fetchProject(1);
+  await GroundsService.create(APP_PROJECT_ID);
+  await fetchProject(APP_PROJECT_ID);
 };
 
 onMounted(async () => {
   console.log("App", "onMounted");
-  await fetchProject(1);
+  await fetchProject(APP_PROJECT_ID);
   guiContainer.value.appendChild(gui.domElement);
   // get all engine
   engine.renderer = rendererRef.value.renderer;
   engine.scene = sceneRef.value.scene;
   engine.camera = cameraRef.value.camera;
   itemsRef.value.map((item) => {
-    engine.scene.add(item.group);
+    try {
+      engine.scene.add(item.group);
+    } catch (err) {
+      console.error("App", "onMounted", err.message);
+    }
   });
   // controls
   controls = new OrbitControls(engine.camera, engine.renderer.domElement);
