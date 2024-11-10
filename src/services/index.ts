@@ -1,13 +1,15 @@
-import ProjectsService from "./ProjectsService";
 import BlocksService from "./BlocksService";
-import WallsService from "./WallsService";
-import GroundsService from "./GroundsService";
 import BoxesService from "./BoxesService";
+import GroundsService from "./GroundsService";
+import HorizontalFencesService from "./HorizontalFencesService";
+import ProjectsService from "./ProjectsService";
+import WallsService from "./WallsService";
 
 export {
-  ProjectsService,
   BlocksService,
-  WallsService,
-  GroundsService,
   BoxesService,
+  GroundsService,
+  HorizontalFencesService,
+  ProjectsService,
+  WallsService,
 };

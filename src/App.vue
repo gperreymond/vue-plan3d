@@ -3,9 +3,10 @@
   <div ref="sceneContainer" class="scene-container"></div>
   <div ref="guiContainer" class="gui-container"></div>
   <div class="buttons-container">
-    <button @click="addNewWallHandler">New Wall</button>
     <button @click="addNewBlockHandler">New Block</button>
+    <button @click="addNewBoxHandler">New Box</button>
     <button @click="addNewGroundHandler">New Ground</button>
+    <button @click="addNewWallHandler">New Wall</button>
   </div>
   <!-- components -->
   <Camera v-if="project" ref="cameraRef" />
@@ -77,6 +78,7 @@ import {
 } from "./components";
 import {
   BlocksService,
+  BoxesService,
   GroundsService,
   ProjectsService,
   WallsService,
@@ -145,8 +147,8 @@ gui.folders.map((item) => {
   item.close();
 });
 
-const addNewWallHandler = async () => {
-  await WallsService.create(APP_PROJECT_ID);
+const addNewBoxHandler = async () => {
+  await BoxesService.create(APP_PROJECT_ID);
   await fetchProject(APP_PROJECT_ID);
 };
 
@@ -157,6 +159,11 @@ const addNewBlockHandler = async () => {
 
 const addNewGroundHandler = async () => {
   await GroundsService.create(APP_PROJECT_ID);
+  await fetchProject(APP_PROJECT_ID);
+};
+
+const addNewWallHandler = async () => {
+  await WallsService.create(APP_PROJECT_ID);
   await fetchProject(APP_PROJECT_ID);
 };
 

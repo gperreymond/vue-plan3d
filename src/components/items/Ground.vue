@@ -13,7 +13,7 @@ import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { onMounted } from "vue";
 
 import GroundsService from "../../services/GroundsService";
-// import { Grass, Gravel, SwimmingPool } from "../textures/index.ts";
+import { Ground } from "../textures/index.ts";
 
 const props = defineProps({
   parentGUI: {
@@ -38,6 +38,7 @@ const x = props.data.x;
 const y = props.data.y;
 const z = props.data.z;
 const color = props.data.color;
+const texture = props.data.texture || "";
 
 const params = {
   name,
@@ -47,6 +48,7 @@ const params = {
   y,
   z,
   color,
+  texture,
   // calculated
   totalSurface: "0",
 };
@@ -57,25 +59,28 @@ const calculateTotalSurface = () => {
 
 let box: Mesh;
 const generateItem = (): Mesh => {
-  let texture: Texture | undefined;
-  // switch (_id) {
-  //   case 1:
-  //     texture = Grass(params.width, params.height);
-  //     break;
-  //   case 2:
-  //     texture = Gravel(params.width, params.height);
-  //     break;
-  //   case 3:
-  //     texture = SwimmingPool(params.width, params.height);
-  //     break;
-  //   default:
-  // }
+  let currentTexture: Texture | undefined;
+  switch (params.texture.split("_")[0]) {
+    case "GRASS":
+    case "GRAVEL":
+    case "STONE":
+    case "WATER":
+    case "WOOD":
+    case "COBBLESTONE":
+      currentTexture = Ground.generate(
+        params.texture,
+        params.width,
+        params.height,
+      );
+      break;
+    default:
+  }
   const item = new Mesh(
     new PlaneGeometry(params.width, params.height),
     new MeshStandardMaterial({
-      color: texture ? null : params.color,
+      color: currentTexture ? null : params.color,
       side: DoubleSide,
-      map: texture ? texture : null,
+      map: currentTexture ? currentTexture : null,
     }),
   );
   item.rotation.x = Math.PI / 2;
@@ -120,6 +125,10 @@ const setupGUI = () => {
   gui.add(params, "x").name("x").onChange(onChangeHandler);
   gui.add(params, "y").name("y").onChange(onChangeHandler);
   gui.add(params, "z").name("z").onChange(onChangeHandler);
+  gui
+    .add(params, "texture", Ground.getTextures())
+    .name("texture")
+    .onChange(onChangeHandler);
   gui
     .addColor(params, "color")
     .name("background color")

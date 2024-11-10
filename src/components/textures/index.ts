@@ -1,5 +1,3 @@
-import Gravel from "./Gravel";
-import Grass from "./Grass";
-import SwimmingPool from "./SwimmingPool";
+import Ground from "./Ground";
 
-export { Gravel, Grass, SwimmingPool };
+export { Ground };
