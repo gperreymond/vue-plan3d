@@ -1,6 +1,7 @@
 <template></template>
 
 <script setup lang="ts">
+import { random } from "lodash";
 import {
   DoubleSide,
   Group,
@@ -13,7 +14,7 @@ import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { onMounted } from "vue";
 
 import GroundsService from "../../services/GroundsService";
-import { Ground } from "../textures/index.ts";
+import { Ground } from "../textures";
 
 const props = defineProps({
   parentGUI: {
@@ -60,24 +61,36 @@ const calculateTotalSurface = () => {
 let box: Mesh;
 const generateItem = (): Mesh => {
   let currentTexture: Texture | undefined;
-  switch (params.texture.split("_")[0]) {
-    case "GRASS":
-    case "GRAVEL":
-    case "STONE":
-    case "WATER":
-    case "WOOD":
-    case "COBBLESTONE":
-      currentTexture = Ground.generate(
-        params.texture,
-        params.width,
-        params.height,
-      );
-      break;
-    default:
+  if (params.texture !== "") {
+    currentTexture = Ground.generate(
+      params.texture,
+      params.width,
+      params.height,
+    );
   }
+
+  const geometry = new PlaneGeometry(
+    params.width,
+    params.height,
+    params.width / 100,
+    params.height / 100,
+  );
+  // // Perturber la géométrie
+  // const positionAttribute = geometry.attributes.position;
+  // const vertexCount = positionAttribute.count;
+  // for (let i = 0; i < vertexCount; i++) {
+  //   // Accéder aux coordonnées x, y, z
+  //   const zOffset = random(0, 2); // Perturbation aléatoire
+  //   positionAttribute.setZ(i, positionAttribute.getZ(i) + zOffset);
+  // }
+  // // Indiquer que la position a été modifiée
+  // positionAttribute.needsUpdate = true;
+  // geometry.computeVertexNormals(); // Recalculer les normales pour un rendu correct des ombres
+
   const item = new Mesh(
-    new PlaneGeometry(params.width, params.height),
+    geometry,
     new MeshStandardMaterial({
+      wireframe: false,
       color: currentTexture ? null : params.color,
       side: DoubleSide,
       map: currentTexture ? currentTexture : null,
@@ -85,7 +98,7 @@ const generateItem = (): Mesh => {
   );
   item.rotation.x = Math.PI / 2;
   item.receiveShadow = true;
-  item.castShadow = false;
+  item.castShadow = true;
   return item;
 };
 box = generateItem();

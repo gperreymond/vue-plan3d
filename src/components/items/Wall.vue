@@ -1,11 +1,12 @@
 <template></template>
 
 <script setup lang="ts">
-import { BoxGeometry, Group, Mesh, MeshStandardMaterial } from "three";
+import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Texture } from "three";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { onMounted } from "vue";
 
 import WallsService from "../../services/WallsService";
+import { Wall } from "../textures";
 
 const props = defineProps({
   parentGUI: {
@@ -31,6 +32,7 @@ const x = props.data.x;
 const y = props.data.y;
 const z = props.data.z;
 const flip = props.data.flip;
+const texture = props.data.texture || "";
 const color = props.data.color;
 
 const params = {
@@ -42,6 +44,7 @@ const params = {
   y,
   z,
   flip,
+  texture,
   color,
   // calculated
   totalSurface: "0",
@@ -53,13 +56,17 @@ const calculateTotalSurface = () => {
 
 let box: Mesh;
 const generateItem = (): Mesh => {
-  const geometry = new BoxGeometry(
-    params.width,
-    params.height,
-    params.thickness,
+  let currentTexture: Texture | undefined;
+  if (params.texture !== "") {
+    currentTexture = Wall.generate(params.texture, params.width, params.height);
+  }
+  const item = new Mesh(
+    new BoxGeometry(params.width, params.height, params.thickness),
+    new MeshStandardMaterial({
+      color: currentTexture ? null : params.color,
+      map: currentTexture ? currentTexture : null,
+    }),
   );
-  const material = new MeshStandardMaterial({ color: params.color });
-  const item = new Mesh(geometry, material);
   item.receiveShadow = true;
   item.castShadow = true;
   return item;
@@ -111,6 +118,10 @@ const setupGUI = () => {
   gui.add(params, "y").name("y").onChange(onChangeHandler);
   gui.add(params, "z").name("z").onChange(onChangeHandler);
   gui.add(params, "flip").name("flip").onChange(onChangeHandler);
+  gui
+    .add(params, "texture", Wall.getTextures())
+    .name("texture")
+    .onChange(onChangeHandler);
   gui.addColor(params, "color").name("color").onChange(onChangeHandler);
   const surfaceLabel = gui
     .add(params, "totalSurface")
