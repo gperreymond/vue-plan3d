@@ -5,7 +5,6 @@ import {
   AxesHelper,
   CameraHelper,
   DirectionalLight,
-  Fog,
   GridHelper,
   HemisphereLight,
   HemisphereLightHelper,

@@ -60,7 +60,7 @@
   />
 </template>
 
-<script setup lan="ts">
+<script setup lang="js">
 import { ref, onMounted, onUnmounted } from "vue";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";

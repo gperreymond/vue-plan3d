@@ -4,7 +4,6 @@ const files = {
   GRASS_1: "public/assets/textures/grass_001.jpg",
   GRASS_2: "public/assets/textures/pixels/grass_2.png",
   GRASS_3: "public/assets/textures/pixels/grass_3.png",
-  GRASS_4: "public/assets/textures/RealisticTexturePack/grass.png",
   GRAVEL_1: "public/assets/textures/gravel_001.jpg",
   GRAVEL_2: "public/assets/textures/gravel_002.jpg",
   GRAVEL_3: "public/assets/textures/gravel_003.jpg",
