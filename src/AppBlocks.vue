@@ -23,11 +23,15 @@ import { Camera, Renderer, Scene } from "./components";
 import { ProjectsService } from "./services";
 import {
   BoxGeometry,
+  CubeTextureLoader,
   DoubleSide,
+  Group,
   Mesh,
   MeshStandardMaterial,
   TextureLoader,
 } from "three";
+
+import arena from "./data/arena-001";
 
 const APP_PROJECT_ID = 2;
 
@@ -71,49 +75,67 @@ gui.folders.map((item) => {
   item.close();
 });
 
-const grassTextures = [
-  new TextureLoader().load(
-    "public/assets/textures/Free Vegetation Textures 31-60/Vegetation (31).png",
-  ),
-  new TextureLoader().load(
-    "public/assets/textures/Free Vegetation Textures 31-60/Vegetation (60).png",
-  ),
+const tiles = [
+  "ground",
+  "groundEarth",
+  "groundEarthCheckered",
+  "groundCheckered",
+  "groundMud",
+  "snow",
+  "stone01",
+  "stone02",
+  "stone03",
+  "stone04",
+  "stone05",
+  "stone06",
+  "stone07",
+  "wallBrick01",
+  "wallBrick02",
+  "wallBrick03",
+  "wallBrick04",
+  "wallBrick05",
+  "wallBrick06",
+  "wallStone",
+  "water",
 ];
-const groundTextures = [
-  new TextureLoader().load(
-    "public/assets/textures/Grounds 1-100/Ground (1).png",
-  ),
-  new TextureLoader().load(
-    "public/assets/textures/Grounds 1-100/Ground (2).png",
-  ),
-  new TextureLoader().load(
-    "public/assets/textures/Grounds 1-100/Ground (3).png",
-  ),
-  new TextureLoader().load(
-    "public/assets/textures/Grounds 1-100/Ground (4).png",
-  ),
-];
+const mapping = ["px", "nx", "py", "ny", "pz", "nz"];
+const textures = {};
+tiles.map((tile) => {
+  textures[tile] = {};
+  mapping.map((filename) => {
+    textures[tile][filename] = new TextureLoader().load(
+      `public/assets/cubes/${tile}/${filename}.png`,
+      () => {
+        console.log(`[${tile}] texture :${filename}: loaded!`);
+      },
+    );
+  });
+});
+
 const generateCube = (params) => {
-  const { size, wireframe = false } = params;
+  const group = new Group();
+  const { texture = "water", width, height, depth } = params;
   const materials = [
     // Right
-    new MeshStandardMaterial({ map: groundTextures[0], side: DoubleSide }),
+    new MeshStandardMaterial({ map: textures[texture].ny, side: DoubleSide }),
     // Left
-    new MeshStandardMaterial({ map: groundTextures[0], side: DoubleSide }),
+    new MeshStandardMaterial({ map: textures[texture].ny, side: DoubleSide }),
     // Top
-    new MeshStandardMaterial({ map: grassTextures[0], side: DoubleSide }),
+    new MeshStandardMaterial({ map: textures[texture].pz, side: DoubleSide }),
     // Bottom
-    new MeshStandardMaterial({ map: groundTextures[2], side: DoubleSide }),
+    new MeshStandardMaterial({ map: textures[texture].nz, side: DoubleSide }),
     // Up
-    new MeshStandardMaterial({ map: groundTextures[0], side: DoubleSide }),
+    new MeshStandardMaterial({ map: textures[texture].ny, side: DoubleSide }),
     // Down
-    new MeshStandardMaterial({ map: groundTextures[0], side: DoubleSide }),
+    new MeshStandardMaterial({ map: textures[texture].ny, side: DoubleSide }),
   ];
-  const geometry = new BoxGeometry(size, size, size);
+  const material = new MeshStandardMaterial({ wireframe: true });
+  const geometry = new BoxGeometry(width, height, depth);
   const item = new Mesh(geometry, materials);
   item.receiveShadow = true;
   item.castShadow = true;
-  return item;
+  group.add(item);
+  return group;
 };
 
 onMounted(async () => {
@@ -126,23 +148,28 @@ onMounted(async () => {
   engine.camera = cameraRef.value.camera;
   // ---------------------------------------------
   // 1. grounds
-  const cubeSize = 100;
-  for (let col = 0; col < 10; col++) {
-    for (let row = 0; row < 10; row++) {
-      const cube = generateCube({
-        size: cubeSize,
-        wireframe: true,
-      });
-      cube.position.set(
-        col * cubeSize - (project.value.width - cubeSize) / 2,
-        -(cubeSize / 2),
-        row * cubeSize - (project.value.width - cubeSize) / 2,
-      );
-      cube.receiveShadow = true;
-      cube.castShadow = true;
-      engine.scene.add(cube);
+  arena.floors.map((floor) => {
+    for (let col = 0; col < floor.cols; col++) {
+      for (let row = 0; row < floor.rows; row++) {
+        const cube = generateCube({
+          ...arena.cube,
+          ...floor,
+        });
+        cube.position.set(
+          col * arena.cube.width -
+            (project.value.width - arena.cube.width) / 2 +
+            arena.cube.width * (floor.x || 0),
+          -(arena.cube.height / 2) + arena.cube.height * (floor.z || 0),
+          row * arena.cube.depth -
+            (project.value.width - arena.cube.depth) / 2 +
+            arena.cube.depth * (floor.y || 0),
+        );
+        cube.receiveShadow = true;
+        cube.castShadow = true;
+        engine.scene.add(cube);
+      }
     }
-  }
+  });
   // ---------------------------------------------
   // controls
   controls = new OrbitControls(engine.camera, engine.renderer.domElement);

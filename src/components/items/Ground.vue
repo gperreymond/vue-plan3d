@@ -139,7 +139,7 @@ const setupGUI = () => {
   gui.add(params, "y").name("y").onChange(onChangeHandler);
   gui.add(params, "z").name("z").onChange(onChangeHandler);
   gui
-    .add(params, "texture", Ground.getTextures())
+    .add(params, "texture", ["", ...Ground.getTextures()])
     .name("texture")
     .onChange(onChangeHandler);
   gui

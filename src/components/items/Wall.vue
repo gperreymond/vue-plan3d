@@ -119,7 +119,7 @@ const setupGUI = () => {
   gui.add(params, "z").name("z").onChange(onChangeHandler);
   gui.add(params, "flip").name("flip").onChange(onChangeHandler);
   gui
-    .add(params, "texture", Wall.getTextures())
+    .add(params, "texture", ["", ...Wall.getTextures()])
     .name("texture")
     .onChange(onChangeHandler);
   gui.addColor(params, "color").name("color").onChange(onChangeHandler);
