@@ -43,6 +43,7 @@
     :ref="setItemsRef"
     :parentGUI="gui.folders[3]"
     :sceneWidth="project.width"
+    @itemDeleted="handleItemDeleted"
   />
   <Box
     v-for="data in boxes"
@@ -150,6 +151,23 @@ gui.folders.map((item) => {
   item.show();
   item.close();
 });
+
+const handleItemDeleted = async (type, id) => {
+  console.log("event item deleted", type, id);
+  const name = `${type}:${id}`;
+  switch (type) {
+    case "block":
+      blocks.value = blocks.value.filter((block) => block.id !== id);
+      break;
+    default:
+  }
+  itemsRef.value = itemsRef.value.filter((item) => item.group.name !== name);
+  engine.scene.children.map((child) => {
+    if (child.name === name) {
+      engine.scene.remove(child);
+    }
+  });
+};
 
 const addNewBoxHandler = async () => {
   try {

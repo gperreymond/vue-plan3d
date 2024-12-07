@@ -104,6 +104,7 @@ const generateItem = (): Mesh => {
 box = generateItem();
 
 let group: Group = new Group();
+group.name = `ground:${_id}`;
 const updateGroup = (update: boolean = false) => {
   if (update === true) {
     group.remove(box);

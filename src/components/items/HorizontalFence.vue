@@ -100,6 +100,7 @@ const generateRail = (): Mesh => {
 };
 
 let group: Group = new Group();
+group.name = `horizontal-fence:${_id}`;
 const updateGroup = (update: boolean = false) => {
   if (update === true) {
     rails.map((item) => {

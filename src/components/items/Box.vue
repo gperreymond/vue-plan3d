@@ -126,6 +126,7 @@ const generatePlan = (): Mesh => {
 plan = generatePlan();
 
 let group: Group = new Group();
+group.name = `box:${_id}`;
 const updateGroup = (update: boolean = false) => {
   if (update === true) {
     group.remove(plan);

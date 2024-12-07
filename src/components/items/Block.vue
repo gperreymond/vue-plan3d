@@ -65,6 +65,7 @@ const generateItem = (): Mesh => {
 box = generateItem();
 
 let group: Group = new Group();
+group.name = `block:${_id}`;
 const updateGroup = (update: boolean = false) => {
   if (update === true) {
     group.remove(box);
@@ -84,9 +85,19 @@ const onChangeHandler = async () => {
   try {
     await BlocksService.update(_id, params);
     await updateGroup(true);
-  } catch (err) {
+  } catch (err: any) {
     console.error("Block", "onChangeHandler", err.message);
     alert("Failed to update block: " + err.message);
+  }
+};
+
+const deleteItemHandler = async () => {
+  try {
+    await BlocksService.delete(_id);
+    emit("itemDeleted", "block", _id);
+  } catch (err: any) {
+    console.error("Block", "deleteBlockHandler", err.message);
+    alert("Failed to delete block: " + err.message);
   }
 };
 
@@ -112,7 +123,12 @@ const setupGUI = () => {
     .listen();
   surfaceLabel.domElement.style.pointerEvents = "none";
   surfaceLabel.domElement.style.color = "#a2db3c";
+
+  // Add delete button
+  gui.add({ delete: deleteItemHandler }, "delete").name("Delete Block");
 };
+
+const emit = defineEmits(["itemDeleted"]);
 
 defineExpose({
   group,
