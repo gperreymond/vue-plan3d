@@ -81,8 +81,13 @@ const updateGroup = (update: boolean = false) => {
 updateGroup();
 
 const onChangeHandler = async () => {
-  await BlocksService.update(_id, params);
-  await updateGroup(true);
+  try {
+    await BlocksService.update(_id, params);
+    await updateGroup(true);
+  } catch (err) {
+    console.error("Block", "onChangeHandler", err.message);
+    alert("Failed to update block: " + err.message);
+  }
 };
 
 const gui = new GUI({

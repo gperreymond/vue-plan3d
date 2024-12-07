@@ -7,6 +7,8 @@
     <button @click="addNewBoxHandler">New Box</button>
     <button @click="addNewGroundHandler">New Ground</button>
     <button @click="addNewWallHandler">New Wall</button>
+    <button @click="saveProjectHandler">Save Project</button>
+    <button @click="loadProjectHandler">Load Project</button>
   </div>
   <!-- components -->
   <Camera v-if="project" ref="cameraRef" />
@@ -65,7 +67,6 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
-// import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 import {
   Block,
@@ -105,6 +106,7 @@ const fetchProject = async (id) => {
     horizontalFences.value = response.data.horizontalFences;
   } catch (err) {
     console.error("App", "fetchProject", err.message);
+    alert("Failed to fetch project: " + err.message);
   }
 };
 
@@ -150,23 +152,63 @@ gui.folders.map((item) => {
 });
 
 const addNewBoxHandler = async () => {
-  await BoxesService.create(projectId.value);
-  await fetchProject(projectId.value);
+  try {
+    await BoxesService.create(projectId.value);
+    await fetchProject(projectId.value);
+  } catch (err) {
+    console.error("App", "addNewBoxHandler", err.message);
+    alert("Failed to add new box: " + err.message);
+  }
 };
 
 const addNewBlockHandler = async () => {
-  await BlocksService.create(projectId.value);
-  await fetchProject(projectId.value);
+  try {
+    await BlocksService.create(projectId.value);
+    await fetchProject(projectId.value);
+  } catch (err) {
+    console.error("App", "addNewBlockHandler", err.message);
+    alert("Failed to add new block: " + err.message);
+  }
 };
 
 const addNewGroundHandler = async () => {
-  await GroundsService.create(projectId.value);
-  await fetchProject(projectId.value);
+  try {
+    await GroundsService.create(projectId.value);
+    await fetchProject(projectId.value);
+  } catch (err) {
+    console.error("App", "addNewGroundHandler", err.message);
+    alert("Failed to add new ground: " + err.message);
+  }
 };
 
 const addNewWallHandler = async () => {
-  await WallsService.create(projectId.value);
-  await fetchProject(projectId.value);
+  try {
+    await WallsService.create(projectId.value);
+    await fetchProject(projectId.value);
+  } catch (err) {
+    console.error("App", "addNewWallHandler", err.message);
+    alert("Failed to add new wall: " + err.message);
+  }
+};
+
+const saveProjectHandler = async () => {
+  try {
+    await ProjectsService.save(projectId.value, project.value);
+    alert("Project saved successfully!");
+  } catch (err) {
+    console.error("App", "saveProjectHandler", err.message);
+    alert("Failed to save project: " + err.message);
+  }
+};
+
+const loadProjectHandler = async () => {
+  try {
+    await fetchProject(projectId.value);
+    alert("Project loaded successfully!");
+  } catch (err) {
+    console.error("App", "loadProjectHandler", err.message);
+    alert("Failed to load project: " + err.message);
+  }
 };
 
 onMounted(async () => {
@@ -192,13 +234,6 @@ onMounted(async () => {
   controls.enableZoom = true;
   // Go pikachu!
   sceneContainer.value.appendChild(engine.renderer.domElement);
-
-  // const loader = new FBXLoader();
-  // loader.load('public/assets/quiver_tree_02_4k.fbx/quiver_tree_02_4k.fbx', function(item) {
-  //   engine.scene.add(item);
-  // }, undefined, function ( error ) {
-  //   console.error( error );
-  // });
 
   animate();
 });
