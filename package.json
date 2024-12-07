@@ -11,20 +11,21 @@
     "format": "prettier src --write"
   },
   "dependencies": {
-    "axios": "1.7.8",
+    "axios": "1.7.9",
     "lodash": "4.17.21",
     "three": "0.171.0",
-    "vue": "3.5.13"
+    "vue": "3.5.13",
+    "vue-router": "4.5.0"
   },
   "devDependencies": {
     "@types/three": "0.170.0",
     "@vitejs/plugin-vue": "5.2.1",
     "fs-extra": "11.2.0",
     "npm-check-updates": "17.1.11",
-    "prettier": "3.4.1",
+    "prettier": "3.4.2",
     "sharp": "0.33.5",
     "typescript": "5.7.2",
-    "vite": "6.0.2",
+    "vite": "6.0.3",
     "vite-plugin-eslint": "1.8.1",
     "vue-tsc": "2.1.10"
   }

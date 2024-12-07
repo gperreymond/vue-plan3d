@@ -19,8 +19,8 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 
-import { Camera, Renderer, Scene } from "./components";
-import { ProjectsService } from "./services";
+import { Camera, Renderer, Scene } from "../components";
+import { ProjectsService } from "../services";
 import {
   BoxGeometry,
   CubeTextureLoader,
@@ -31,7 +31,7 @@ import {
   TextureLoader,
 } from "three";
 
-import arena from "./data/arena-001";
+import arena from "../data/arena-001";
 
 const APP_PROJECT_ID = 2;
 
