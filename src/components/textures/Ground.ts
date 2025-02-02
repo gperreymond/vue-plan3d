@@ -7,6 +7,7 @@ const files = {
   GRAVEL_1: "public/assets/textures/gravel_001.jpg",
   GRAVEL_2: "public/assets/textures/gravel_002.jpg",
   GRAVEL_3: "public/assets/textures/gravel_003.jpg",
+  GRAVEL_4: "public/assets/textures/gravel_004.png",
   STONE_1: "public/assets/textures/stone_001.jpg",
   COBBLESTONE_1: "public/assets/textures/pixels/cobblestone_1.png",
   COBBLESTONE_2: "public/assets/textures/pixels/cobblestone_2.png",

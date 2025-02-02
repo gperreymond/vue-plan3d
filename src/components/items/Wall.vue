@@ -103,6 +103,16 @@ const onChangeHandler = async () => {
   await updateGroup(true);
 };
 
+const deleteItemHandler = async () => {
+  try {
+    await WallsService.delete(_id);
+    emit("itemDeleted", "wall", _id);
+  } catch (err: any) {
+    console.error("deleteBlockHandler", err.message);
+    alert("Failed to delete wall: " + err.message);
+  }
+};
+
 const gui = new GUI({
   autoPlace: false,
   title: name,
@@ -130,7 +140,12 @@ const setupGUI = () => {
     .listen();
   surfaceLabel.domElement.style.pointerEvents = "none";
   surfaceLabel.domElement.style.color = "#a2db3c";
+
+  // Add delete button
+  gui.add({ delete: deleteItemHandler }, "delete").name("Delete Wall");
 };
+
+const emit = defineEmits(["itemDeleted"]);
 
 defineExpose({
   group,

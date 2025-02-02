@@ -96,7 +96,7 @@ const deleteItemHandler = async () => {
     await BlocksService.delete(_id);
     emit("itemDeleted", "block", _id);
   } catch (err: any) {
-    console.error("Block", "deleteBlockHandler", err.message);
+    console.error("deleteItemHandler", err.message);
     alert("Failed to delete block: " + err.message);
   }
 };

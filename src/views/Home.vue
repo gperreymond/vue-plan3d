@@ -7,6 +7,7 @@
     <button @click="addNewBoxHandler">New Box</button>
     <button @click="addNewGroundHandler">New Ground</button>
     <button @click="addNewWallHandler">New Wall</button>
+    <button @click="addNewPergolaHandler">New Pergola</button>
     <button @click="saveProjectHandler">Save Project</button>
     <button @click="loadProjectHandler">Load Project</button>
   </div>
@@ -35,6 +36,7 @@
     :ref="setItemsRef"
     :parentGUI="gui.folders[2]"
     :sceneWidth="project.width"
+    @itemDeleted="handleItemDeleted"
   />
   <Block
     v-for="data in blocks"
@@ -52,6 +54,7 @@
     :ref="setItemsRef"
     :parentGUI="gui.folders[4]"
     :sceneWidth="project.width"
+    @itemDeleted="handleItemDeleted"
   />
   <HorizontalFence
     v-for="data in horizontalFences"
@@ -59,6 +62,14 @@
     :data="data"
     :ref="setItemsRef"
     :parentGUI="gui.folders[5]"
+    :sceneWidth="project.width"
+  />
+  <Pergola
+    v-for="data in pergolas"
+    :key="data.id"
+    :data="data"
+    :ref="setItemsRef"
+    :parentGUI="gui.folders[6]"
     :sceneWidth="project.width"
   />
 </template>
@@ -78,6 +89,7 @@ import {
   Renderer,
   Scene,
   Wall,
+  Pergola
 } from "../components";
 import {
   BlocksService,
@@ -85,6 +97,7 @@ import {
   GroundsService,
   ProjectsService,
   WallsService,
+  PergolasService
 } from "../services";
 
 const route = useRoute();
@@ -96,6 +109,7 @@ const walls = ref([]);
 const blocks = ref([]);
 const boxes = ref([]);
 const horizontalFences = ref([]);
+const pergolas = ref([]);
 const fetchProject = async (id) => {
   try {
     const response = await ProjectsService.get(id);
@@ -105,6 +119,7 @@ const fetchProject = async (id) => {
     blocks.value = response.data.blocks;
     boxes.value = response.data.boxes;
     horizontalFences.value = response.data.horizontalFences;
+    pergolas.value = response.data.pergolas;
   } catch (err) {
     console.error("App", "fetchProject", err.message);
     alert("Failed to fetch project: " + err.message);
@@ -147,6 +162,7 @@ gui.addFolder("WALLS");
 gui.addFolder("BLOCKS");
 gui.addFolder("BOXES");
 gui.addFolder("HORIZONTAL FENCES");
+gui.addFolder("PERGOLAS");
 gui.folders.map((item) => {
   item.show();
   item.close();
@@ -156,6 +172,12 @@ const handleItemDeleted = async (type, id) => {
   console.log("event item deleted", type, id);
   const name = `${type}:${id}`;
   switch (type) {
+    case "box":
+      boxes.value = boxes.value.filter((box) => box.id !== id);
+      break;
+    case "wall":
+      walls.value = walls.value.filter((wall) => wall.id !== id);
+      break;
     case "block":
       blocks.value = blocks.value.filter((block) => block.id !== id);
       break;
@@ -206,6 +228,16 @@ const addNewWallHandler = async () => {
   } catch (err) {
     console.error("App", "addNewWallHandler", err.message);
     alert("Failed to add new wall: " + err.message);
+  }
+};
+
+const addNewPergolaHandler = async () => {
+  try {
+    await PergolasService.create(projectId.value);
+    await fetchProject(projectId.value);
+  } catch (err) {
+    console.error("App", "addNewPergolaHandler", err.message);
+    alert("Failed to add new pergola: " + err.message);
   }
 };
 

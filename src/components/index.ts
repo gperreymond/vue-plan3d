@@ -6,5 +6,6 @@ import Ground from "./items/Ground.vue";
 import Block from "./items/Block.vue";
 import Box from "./items/Box.vue";
 import HorizontalFence from "./items/HorizontalFence.vue";
+import Pergola from "./items/Pergola.vue";
 
-export { Renderer, Scene, Camera, Wall, Ground, Block, Box, HorizontalFence };
+export { Renderer, Scene, Camera, Wall, Ground, Block, Box, HorizontalFence, Pergola };

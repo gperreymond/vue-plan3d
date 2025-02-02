@@ -4,6 +4,7 @@ import GroundsService from "./GroundsService";
 import HorizontalFencesService from "./HorizontalFencesService";
 import ProjectsService from "./ProjectsService";
 import WallsService from "./WallsService";
+import PergolasService from "./PergolasService";
 
 export {
   BlocksService,
@@ -12,4 +13,5 @@ export {
   HorizontalFencesService,
   ProjectsService,
   WallsService,
+  PergolasService
 };
